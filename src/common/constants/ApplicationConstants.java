@@ -3,6 +3,8 @@ package common.constants;
 
 public interface ApplicationConstants {
     
+    public static final String SELECT_A_ROW_TO_GENERATE_REPORT = "Selecciona una fila para generar el reporte...";
+    public static final String ALREADY_AVAILABLE = "La ventana ya se encuentra disponible";
     public static final String SECRET_KEY = "#yuosSDCG&6729.3";
     
     /** llaves para la tabla configuracion **/

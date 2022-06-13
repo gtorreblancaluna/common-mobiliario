@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.MessagingException;
@@ -200,14 +203,9 @@ public abstract class UtilityCommon {
         }
         
     }
-     
-    public static String getPathLocation()throws IOException,URISyntaxException{
-   
-        File file = new File(UtilityCommon.class.getProtectionDomain().getCodeSource().getLocation()
-                .toURI()).getParentFile();
-        
-        return file+"";
     
+    public static Date getFromString (String date, String pattern) throws ParseException {
+        return new SimpleDateFormat(pattern).parse(date);
     }
     
 }
