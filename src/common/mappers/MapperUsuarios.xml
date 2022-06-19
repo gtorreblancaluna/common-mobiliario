@@ -36,16 +36,7 @@
         WHERE p.id_puesto = #{idPuesto}
         AND u.activo = 1
         ORDER BY u.nombre
-    </select>  
-    
-    <select id="getUsersInCategoriesAlmacen" resultMap="resultUsuario">
-        SELECT u.*, p.id_puesto, p.descripcion        
-        FROM usuarios u
-        INNER JOIN puesto p ON (p.id_puesto = u.id_puesto)
-        WHERE u.id_usuarios IN (SELECT DISTINCT(a.id_usuarios) FROM asigna_categoria a)
-        AND u.activo = 1
-        ORDER BY u.nombre
-    </select>  
+    </select>   
     
     <select id="getUsersInCategoriesAlmacenAndEvent" resultMap="resultUsuario" parameterType="java.lang.Integer">
         SELECT u.*, p.id_puesto, p.descripcion        
