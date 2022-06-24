@@ -98,6 +98,7 @@ public interface ApplicationConstants {
     public static final String MESSAGE_NOT_PERMISIONS_ADMIN = "No cuentas con permisos de administrador";
     public static final String MESSAGE_MISSING_PARAMETERS = "Faltan parametros";
     public static final String MESSAGE_UNEXPECTED_ERROR = "Ocurri\u00F3 un error inesperado";
+    public static final String MESSAGE_TITLE_ERROR = "Error";
     
     /* mensaje generico */
     public static final String DS_MESSAGE_FAIL_LOGIN = "Contrase\u00F1a incorrecta o usuario no encontrado";

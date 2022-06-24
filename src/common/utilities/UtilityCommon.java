@@ -3,9 +3,6 @@ package common.utilities;
 import common.constants.ApplicationConstants;
 import java.awt.Component;
 import java.awt.Dialog;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -58,9 +55,7 @@ public abstract class UtilityCommon {
         }
         return cerrado;
     }
-    
-    
-    
+        
      public static String formatMoney(String valor) {
         
         DecimalFormatSymbols simbolo = new DecimalFormatSymbols();

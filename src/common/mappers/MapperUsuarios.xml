@@ -21,12 +21,19 @@
         <result property="puesto.descripcion" column="descripcion"/>        
     </resultMap>
   
-    <select id="obtenerUsuarioPorPassword" resultMap="resultUsuario" parameterType="java.lang.String">
+    <select id="getByPassword" resultMap="resultUsuario" parameterType="java.lang.String">
         SELECT u.*, p.id_puesto, p.descripcion        
         FROM usuarios u 
         INNER JOIN puesto p ON (p.id_puesto = u.id_puesto)
         WHERE contrasenia = #{password}
         AND activo = 1
+    </select>  
+    
+    <select id="getById" resultMap="resultUsuario" parameterType="java.lang.Integer">
+        SELECT u.*, p.id_puesto, p.descripcion        
+        FROM usuarios u 
+        INNER JOIN puesto p ON (p.id_puesto = u.id_puesto)
+        WHERE id_usuarios = #{id}
     </select>  
   
   <select id="getChoferes" resultMap="resultUsuario" parameterType="java.lang.Integer">
