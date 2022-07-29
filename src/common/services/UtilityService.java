@@ -36,7 +36,7 @@ public class UtilityService {
         return SINGLE_INSTANCE;
     } 
     
-    
+       
     public void exportarExcel(JTable tabla){
           // TODO add your handling code here:this.workbook = new HSSFWorkbook();
         contaFila = 1;
