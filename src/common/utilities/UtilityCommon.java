@@ -17,6 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JTable;
 
 
 public abstract class UtilityCommon {
@@ -177,7 +178,11 @@ public abstract class UtilityCommon {
     }
     
    
-    
+    public static void selectAllCheckboxInTable (JTable table, int column, boolean checked) {
+       for (int i = 0 ; i < table.getRowCount() ; i++) {
+            table.setValueAt(checked, i, column);
+       }
+    }
     
      public static void isEmail(String email) throws MessagingException{ //validar correo electronico
          

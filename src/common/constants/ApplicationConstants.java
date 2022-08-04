@@ -108,10 +108,12 @@ public interface ApplicationConstants {
     // nombres de reportes jasper
     public static final String RUTA_REPORTE_ENTREGAS = "/reporteEntrega.jasper";
     public static final String NOMBRE_REPORTE_ENTREGAS = "/reporteEntrega.pdf";
+    public static final String NOMBRE_REPORTE_ENTREGAS_SIN_EXT = "/reporteEntrega";
     public static final String RUTA_REPORTE_CONSULTA = "/renta_consulta.jasper";
     public static final String NOMBRE_REPORTE_CONSULTA = "/reporte_consulta.pdf";
     public static final String RUTA_REPORTE_CATEGORIAS = "/reporte_por_categorias.jasper";
     public static final String NOMBRE_REPORTE_CATEGORIAS = "/reporte_por_categorias.pdf";
+    public static final String NOMBRE_REPORTE_CATEGORIAS_SIN_EXT = "/reporte_por_categorias";
     public static final String RUTA_REPORTE_NUEVO_PEDIDO = "/renta.jasper";
     public static final String NOMBRE_REPORTE_NUEVO_PEDIDO = "/reporte.pdf";
     public static final String RUTA_LOGO_EMPRESA = "/";
