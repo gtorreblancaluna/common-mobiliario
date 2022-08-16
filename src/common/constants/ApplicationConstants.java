@@ -3,6 +3,12 @@ package common.constants;
 
 public interface ApplicationConstants {
     
+    public static final Integer UN_ATTEND_ALMACEN_TASK_TYPE_CATALOG = 1;
+    public static final Integer ATTEND_ALMACEN_TASK_TYPE_CATALOG = 2;
+    
+    public static final String UN_ATTEND_ALMACEN_TASK_TYPE_CATALOG_DESCRIPTION = "SIN ATENDER";
+    public static final String ATTEND_ALMACEN_TASK_TYPE_CATALOG_DESCRIPTION = "ATENDIDO";
+    
     public static final String SELECT_A_ROW_TO_GENERATE_REPORT = "Selecciona una fila para generar el reporte...";
     public static final String ALREADY_AVAILABLE = "La ventana ya se encuentra disponible";
     public static final String SECRET_KEY = "#yuosSDCG&6729.3";
