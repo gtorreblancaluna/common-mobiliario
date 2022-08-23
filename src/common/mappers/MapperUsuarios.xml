@@ -60,5 +60,16 @@
         )
         AND u.activo = 1
         ORDER BY u.nombre
+    </select>
+    <select id="getUsersInCategoriesAlmacen" resultMap="resultUsuario" parameterType="java.lang.Integer">
+        SELECT u.*, p.id_puesto, p.descripcion        
+        FROM usuarios u
+        INNER JOIN puesto p ON (p.id_puesto = u.id_puesto)
+        WHERE u.id_usuarios IN (
+                SELECT asigna_categoria.id_usuarios 
+                FROM asigna_categoria asigna_categoria
+        )
+        AND u.activo = 1
+        ORDER BY u.nombre
     </select>  
 </mapper>

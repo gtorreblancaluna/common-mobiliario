@@ -51,5 +51,9 @@ public class UserService {
     public List<Usuario> getUsersInCategoriesAlmacenAndEvent (Integer eventId) throws DataOriginException {
         return usuariosDao.getUsersInCategoriesAlmacenAndEvent(eventId);
     }
+    
+    public List<Usuario> getUsersInCategoriesAlmacen () throws DataOriginException {
+        return usuariosDao.getUsersInCategoriesAlmacen();
+    }
         
 }

@@ -43,6 +43,18 @@ public class Renta {
     private Float calculoDescuento;
     private Float calculoIVA;
     private Float totalCalculo;
+    // este mensaje se muestra en el PDF
+    private String mensajeFaltantes;
+
+    public String getMensajeFaltantes() {
+        return mensajeFaltantes;
+    }
+
+    public void setMensajeFaltantes(String mensajeFaltantes) {
+        this.mensajeFaltantes = mensajeFaltantes;
+    }
+    
+    
 
     public Renta(int rentaId) {
         this.rentaId = rentaId;
