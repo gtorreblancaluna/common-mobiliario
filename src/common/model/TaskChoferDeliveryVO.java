@@ -11,7 +11,6 @@ public class TaskChoferDeliveryVO {
     private Date createdAt;
     private Date updatedAt;
     private Usuario chofer;
-    private String systemMessage;
     private String fgActive;
     private Boolean pendingToPayEvent;
 
@@ -33,16 +32,6 @@ public class TaskChoferDeliveryVO {
         this.fgActive = fgActive;
     }
     
-    
-
-    public String getSystemMessage() {
-        return systemMessage;
-    }
-
-    public void setSystemMessage(String systemMessage) {
-        this.systemMessage = systemMessage;
-    }
-
     public Usuario getChofer() {
         return chofer;
     }
@@ -50,10 +39,6 @@ public class TaskChoferDeliveryVO {
     public void setChofer(Usuario chofer) {
         this.chofer = chofer;
     }
-    
-      
-    
-    
 
     public Date getCreatedAt() {
         return createdAt;

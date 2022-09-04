@@ -11,7 +11,6 @@ public class TaskAlmacenVO {
     private Date createdAt;
     private Date updatedAt;
     private Usuario user;
-    private String systemMessage;
     private String fgActive;
 
     public String getFgActive() {
@@ -20,29 +19,15 @@ public class TaskAlmacenVO {
 
     public void setFgActive(String fgActive) {
         this.fgActive = fgActive;
-    }
-    
-    
-
-    public String getSystemMessage() {
-        return systemMessage;
-    }
-
-    public void setSystemMessage(String systemMessage) {
-        this.systemMessage = systemMessage;
-    }
-    
-    
-
+    }    
+ 
     public Usuario getUser() {
         return user;
     }
 
     public void setUser(Usuario user) {
         this.user = user;
-    }
-    
-    
+    }  
 
     public Date getCreatedAt() {
         return createdAt;
