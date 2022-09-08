@@ -13,6 +13,17 @@ public class TaskChoferDeliveryVO {
     private Usuario chofer;
     private String fgActive;
     private Boolean pendingToPayEvent;
+    private Usuario user;
+
+    public Usuario getUser() {
+        return user;
+    }
+
+    public void setUser(Usuario user) {
+        this.user = user;
+    }
+    
+    
 
     public Boolean getPendingToPayEvent() {
         return pendingToPayEvent;

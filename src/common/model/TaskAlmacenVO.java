@@ -10,8 +10,19 @@ public class TaskAlmacenVO {
     private AttendAlmacenTaskTypeCatalogVO attendAlmacenTaskTypeCatalogVO;
     private Date createdAt;
     private Date updatedAt;
-    private Usuario user;
+    private Usuario userByCategory;
     private String fgActive;
+    private Usuario user;
+
+    public Usuario getUser() {
+        return user;
+    }
+
+    public void setUser(Usuario user) {
+        this.user = user;
+    }
+    
+    
 
     public String getFgActive() {
         return fgActive;
@@ -19,15 +30,17 @@ public class TaskAlmacenVO {
 
     public void setFgActive(String fgActive) {
         this.fgActive = fgActive;
-    }    
- 
-    public Usuario getUser() {
-        return user;
     }
 
-    public void setUser(Usuario user) {
-        this.user = user;
-    }  
+    public Usuario getUserByCategory() {
+        return userByCategory;
+    }
+
+    public void setUserByCategory(Usuario userByCategory) {
+        this.userByCategory = userByCategory;
+    }
+ 
+      
 
     public Date getCreatedAt() {
         return createdAt;

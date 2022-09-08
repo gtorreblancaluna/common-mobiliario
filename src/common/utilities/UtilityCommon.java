@@ -65,7 +65,7 @@ public abstract class UtilityCommon {
         }else if (renta.getTotal() > 0 && renta.getTotalAbonos() > 0){
             renta.setDescripcionCobranza(ApplicationConstants.COBRANZA_PARCIAL_PAGADO);
         }
-
+        renta.setMensajeFaltantes("");
         if(renta.getTotalFaltantes() > 0){
             // el pedido tiene pago pendiente por faltante
             if(renta.getDepositoGarantia()>0){
