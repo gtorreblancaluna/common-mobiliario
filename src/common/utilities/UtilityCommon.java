@@ -4,6 +4,7 @@ import common.constants.ApplicationConstants;
 import common.model.Renta;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -33,12 +34,6 @@ public abstract class UtilityCommon {
             renta.setCalculoDescuento(0F);
         }
 
-        if (renta.getIva() != null && renta.getIva() > 0) {
-            renta.setCalculoIVA(renta.getSubTotal() * (renta.getIva() / 100));
-        } else {
-            renta.setCalculoIVA(0F);
-        }
-
         if(renta.getTotalFaltantes() > 0 && renta.getDepositoGarantia()>0){
                 // el pedido tiene pago pendiente por faltante 
                // a dejado deposito en garantia
@@ -52,8 +47,19 @@ public abstract class UtilityCommon {
 
         totalCalculo = (renta.getSubTotal() +
                         (renta.getEnvioRecoleccion() != null ? renta.getEnvioRecoleccion() : 0F) +
+                        (renta.getDepositoGarantia() != null ? renta.getDepositoGarantia() : 0F)) - renta.getCalculoDescuento();
+        
+        if (renta.getIva() != null && renta.getIva() > 0) {
+            renta.setCalculoIVA(totalCalculo * (renta.getIva() / 100));
+        } else {
+            renta.setCalculoIVA(0F);
+        }
+        
+         totalCalculo = (renta.getSubTotal() +
+                        (renta.getEnvioRecoleccion() != null ? renta.getEnvioRecoleccion() : 0F) +
                         (renta.getDepositoGarantia() != null ? renta.getDepositoGarantia() : 0F) +
                         renta.getCalculoIVA()) - renta.getCalculoDescuento();
+        
 
         renta.setTotalCalculo(totalCalculo);
 
@@ -264,8 +270,13 @@ public abstract class UtilityCommon {
         
     }
     
-    public static Date getFromString (String date, String pattern) throws ParseException {
+    public static Date getFromString (final String date, final String pattern) throws ParseException {
         return new SimpleDateFormat(pattern).parse(date);
+    }
+    
+    public static String getStringFromDate (final Date date, final String format) throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat(format);  
+        return dateFormat.format(date);
     }
     
 }
