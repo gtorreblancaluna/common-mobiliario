@@ -19,7 +19,7 @@ public class Articulo {
     private float enRenta;
     private CategoriaDTO categoria;
     
-    private String rentados;
+    private Float rentados;
     private Float faltantes;
     private Float reparacion;
     private Float accidenteTrabajo;
@@ -33,6 +33,14 @@ public class Articulo {
     
     private Float utiles;
 
+    public Float getRentados() {
+        return rentados;
+    }
+
+    public void setRentados(Float rentados) {
+        this.rentados = rentados;
+    }
+    
     public Float getTotalShopProvider() {
         return totalShopProvider;
     }
@@ -82,13 +90,6 @@ public class Articulo {
     }
     public void setFechaUltimaModificacion(Timestamp fechaUltimaModificacion) {
         this.fechaUltimaModificacion = fechaUltimaModificacion;
-    }
-    public String getRentados() {
-        return rentados;
-    }
-
-    public void setRentados(String rentados) {
-        this.rentados = rentados;
     }
 
     public Float getReparacion() {
