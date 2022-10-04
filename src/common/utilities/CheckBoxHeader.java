@@ -14,9 +14,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
         
 
-public class CheckBoxHeader extends JCheckBox
-   implements TableCellRenderer, MouseListener
-{
+public class CheckBoxHeader extends JCheckBox implements TableCellRenderer, MouseListener {
+   
    protected CheckBoxHeader rendererComponent;
    protected int column;
    protected boolean mousePressed = false;
