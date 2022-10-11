@@ -156,6 +156,7 @@
         <if test="descripcion != null and descripcion != '' ">
             AND articulo.descripcion LIKE CONCAT('%',#{descripcion},'%')
         </if>
+        ORDER BY articulo.descripcion
     </select>  
     
     <select id="obtenerEnRenta" parameterType="java.util.Map" resultType="java.lang.String">

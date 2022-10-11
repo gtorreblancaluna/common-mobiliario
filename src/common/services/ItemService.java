@@ -54,6 +54,7 @@ public class ItemService {
        map.put("statusOrder", ApplicationConstants.STATUS_ORDER_PROVIDER_ORDER);
        map.put("typeOrderDetail", ApplicationConstants.TYPE_DETAIL_ORDER_SHOPPING);
        
+       // necessary to get total sum in rent
        map.put("estado_renta", ApplicationConstants.ESTADO_EN_RENTA);
        map.put("tipo_pedido", ApplicationConstants.TIPO_PEDIDO);
         
