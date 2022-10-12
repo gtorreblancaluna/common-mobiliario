@@ -80,6 +80,9 @@ public interface ApplicationConstants {
     public static final String TIPO_PEDIDO = "1";
     public static final String TIPO_COTIZACION = "2";
     
+    public static final String DS_TIPO_PEDIDO = "Pedido";
+    public static final String DS_TIPO_COTIZACION = "Cotización";
+    
     public static final String LOGO_EMPRESA = "/logo_empresa.jpg";
     
     // Descripcion para la columna de cobranza en CONSULTAR RENTA
