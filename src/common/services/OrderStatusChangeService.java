@@ -28,28 +28,26 @@ public class OrderStatusChangeService {
         return SINGLE_INSTANCE;
     }
     
-    public void insert (Integer rentaId, Integer currentStatusId, Integer changeStatusId, Integer userId) throws BusinessException {
-        try {
-            OrderStatusChange orderStatusChange = new OrderStatusChange();
-            
-            orderStatusChange.setRenta(
-                    new Renta(rentaId)
-            );
-            orderStatusChange.setCurrentStatus(
-                    new EstadoEvento(currentStatusId)
-            );
-            orderStatusChange.setChangeStatus(
-                    new EstadoEvento(changeStatusId)
-            );
-            orderStatusChange.setUser(
-                    new Usuario(userId)
-            );
-            orderStatusChange.setCreatedAt(new Date());
-            orderStatusChange.setUpdatedAt(new Date());
-            orderStatusChange.setFgActive("1");
-            orderStatusChangeDAO.save(orderStatusChange);
-        } catch (DataOriginException e) {
-            throw new BusinessException(e.getMessage(),e);
-        }
+    public void insert (Integer rentaId, Integer currentStatusId, Integer changeStatusId, Integer userId) throws BusinessException,DataOriginException {
+      
+        OrderStatusChange orderStatusChange = new OrderStatusChange();
+
+        orderStatusChange.setRenta(
+                new Renta(rentaId)
+        );
+        orderStatusChange.setCurrentStatus(
+                new EstadoEvento(currentStatusId)
+        );
+        orderStatusChange.setChangeStatus(
+                new EstadoEvento(changeStatusId)
+        );
+        orderStatusChange.setUser(
+                new Usuario(userId)
+        );
+        orderStatusChange.setCreatedAt(new Date());
+        orderStatusChange.setUpdatedAt(new Date());
+        orderStatusChange.setFgActive("1");
+        orderStatusChangeDAO.save(orderStatusChange);
+        
     }
 }
