@@ -45,7 +45,19 @@ public class Renta {
     private Float totalCalculo;
     // este mensaje se muestra en el PDF
     private String mensajeFaltantes;
+    // sumatoria del total de ordenes por proveedor
+    private Float totalOrdersProvider;
 
+    public Float getTotalOrdersProvider() {
+        return totalOrdersProvider;
+    }
+
+    public void setTotalOrdersProvider(Float totalOrdersProvider) {
+        this.totalOrdersProvider = totalOrdersProvider;
+    }
+
+    
+    
     public String getMensajeFaltantes() {
         return mensajeFaltantes;
     }
