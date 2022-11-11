@@ -24,6 +24,20 @@ import javax.swing.JTable;
 
 public abstract class UtilityCommon {
     
+    public static void selectCheckBoxWhenKeyPressedIsSpace (java.awt.event.KeyEvent evt, JTable table, int columnBoolean) {
+        
+        if(evt.getKeyCode() != 32) {
+            return;
+        }
+        
+        int rowSelect = table.getSelectedRow();
+        
+        if (rowSelect >= 0) {
+            boolean isSelected = (Boolean) table.getValueAt(rowSelect, columnBoolean);
+            table.setValueAt(!isSelected, rowSelect, columnBoolean);
+        }
+    }
+    
     public static void calcularTotalesPorRenta (Renta renta) {
     
         Float totalCalculo = 0F;
