@@ -79,6 +79,7 @@ public interface ApplicationConstants {
     /** Catalogo tipo de evento */
     public static final String TIPO_PEDIDO = "1";
     public static final String TIPO_COTIZACION = "2";
+    public static final String TIPO_FABRICACION = "3";
     
     public static final String DS_TIPO_PEDIDO = "Pedido";
     public static final String DS_TIPO_COTIZACION = "Cotización";
