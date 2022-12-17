@@ -1,46 +1,30 @@
-
 package common.model;
 
-public class CategoriaDTO {
-    
-    private int categoriaId;
+import lombok.Data;
+
+
+@Data
+public class CategoriaDTO {    
+
+    private Integer categoriaId;
     private String descripcion;
 
     public CategoriaDTO() {
     }
-    
-    
 
-    public CategoriaDTO(int categoriaId, String descripcion) {
+    public CategoriaDTO(Integer categoriaId, String descripcion) {
         this.categoriaId = categoriaId;
         this.descripcion = descripcion;
     }
-    
-    
 
-    public int getCategoriaId() {
-        return categoriaId;
-    }
-
-    public void setCategoriaId(int categoriaId) {
+    public CategoriaDTO(Integer categoriaId) {
         this.categoriaId = categoriaId;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+    }    
+    
 
     @Override
     public String toString() {
         return descripcion;
     }
-    
-    
-    
-    
     
 }

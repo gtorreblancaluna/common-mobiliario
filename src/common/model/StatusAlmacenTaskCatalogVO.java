@@ -1,5 +1,8 @@
 package common.model;
 
+import lombok.Data;
+
+@Data
 public class StatusAlmacenTaskCatalogVO {
         
     private Long id;
@@ -31,30 +34,6 @@ public class StatusAlmacenTaskCatalogVO {
             return id;
         }
         
-    }
-    
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getFgActive() {
-        return fgActive;
-    }
-
-    public void setFgActive(String fgActive) {
-        this.fgActive = fgActive;
     }
 
     @Override
