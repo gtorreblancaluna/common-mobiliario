@@ -1,6 +1,6 @@
 package common.exceptions;
 
-public class NoDataFoundException extends Exception{
+public class NoDataFoundException extends BusinessException{
     
     private transient Throwable cause;
     private transient String message;

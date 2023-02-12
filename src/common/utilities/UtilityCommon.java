@@ -20,9 +20,15 @@ import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import java.text.Normalizer;
 
 
 public abstract class UtilityCommon {
+        
+    public static String removeAccents(String texto) {
+        return Normalizer.normalize(texto, Normalizer.Form.NFD)
+                .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+    }
     
     public static void selectCheckBoxWhenKeyPressedIsSpace (java.awt.event.KeyEvent evt, JTable table, int columnBoolean) {
         

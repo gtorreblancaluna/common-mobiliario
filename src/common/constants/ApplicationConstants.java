@@ -11,6 +11,7 @@ public interface ApplicationConstants {
     public static final String ATTEND_ALMACEN_TASK_TYPE_CATALOG_DESCRIPTION = "ATENDIDO";
     
     public static final String SELECT_A_ROW_TO_GENERATE_REPORT = "Selecciona una fila para generar el reporte...";
+    public static final String SELECT_A_ROW_NECCESSARY = "Selecciona una fila para continuar...";
     public static final String ALREADY_AVAILABLE = "La ventana ya se encuentra disponible";
     public static final String SECRET_KEY = "#yuosSDCG&6729.3";
     
@@ -110,6 +111,7 @@ public interface ApplicationConstants {
     public static final String MESSAGE_MISSING_PARAMETERS = "Faltan parametros";
     public static final String MESSAGE_UNEXPECTED_ERROR = "Ocurri\u00F3 un error inesperado";
     public static final String MESSAGE_TITLE_ERROR = "Error";
+    public static final String NO_DATA_FOUND_EXCEPTION = "No se obtuvieron registros";
     
     /* mensaje generico */
     public static final String DS_MESSAGE_FAIL_LOGIN = "Contrase\u00F1a incorrecta o usuario no encontrado";
