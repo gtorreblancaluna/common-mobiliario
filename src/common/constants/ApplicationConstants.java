@@ -3,6 +3,12 @@ package common.constants;
 
 public interface ApplicationConstants {
     
+    public static final String MESSAGE_GENERATE_TASK_ALMACEN_NO_ACTIVE = 
+            "Generar tareas a almacen esta desactivado. Puede activarlo en la ventana de Utilerias.";
+    
+    public static final String MESSAGE_GENERATE_TASK_CHOFER_NO_ACTIVE = 
+            "Generar tareas a chofer esta desactivado. Puede activarlo en la ventana de Utilerias.";
+        
     public final static Integer LIMIT_GENERATE_PDF = 20;
     public static final Integer UN_ATTEND_ALMACEN_TASK_TYPE_CATALOG = 1;
     public static final Integer ATTEND_ALMACEN_TASK_TYPE_CATALOG = 2;

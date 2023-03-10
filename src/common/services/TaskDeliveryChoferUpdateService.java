@@ -1,5 +1,6 @@
 package common.services;
 
+import common.constants.ApplicationConstants;
 import common.dao.TaskDeliveryChoferUpdateDAO;
 import common.exceptions.DataOriginException;
 import common.exceptions.NoDataFoundException;
@@ -17,13 +18,14 @@ import org.apache.log4j.Logger;
 public class TaskDeliveryChoferUpdateService {
     
     private TaskDeliveryChoferUpdateService () {}
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TaskDeliveryChoferUpdateService.class.getName());
     private static final TaskDeliveryChoferUpdateService SINGLE_INSTANCE = null;
     private final TaskUtilityValidateUpdateService taskUtilityValidateUpdateService = TaskUtilityValidateUpdateService.getInstance();
     private static final Logger LOGGER = Logger.getLogger(TaskDeliveryChoferUpdateService.class.getName());
     private final TaskDeliveryChoferUpdateDAO taskDeliveryChoferUpdateDAO = TaskDeliveryChoferUpdateDAO.getInstance();
         
     public static TaskDeliveryChoferUpdateService getInstance(){
-        
+               
         if (SINGLE_INSTANCE == null) {
             return new TaskDeliveryChoferUpdateService();
         }
@@ -36,7 +38,13 @@ public class TaskDeliveryChoferUpdateService {
             final Boolean updateItems,
             final String choferId,
             final Boolean generalDataUpdated,
-            final String userId)  throws NoDataFoundException, DataOriginException {
+            final String userId,
+            final Boolean generateTaskChofer
+    )  throws NoDataFoundException, DataOriginException {
+        
+        if (!generateTaskChofer) {
+            throw new NoDataFoundException(ApplicationConstants.MESSAGE_GENERATE_TASK_CHOFER_NO_ACTIVE);
+        }
         
         TaskCatalogVO taskCatalogVO = taskUtilityValidateUpdateService.validateAndBuild(
                 eventStatusChange,
@@ -98,7 +106,13 @@ public class TaskDeliveryChoferUpdateService {
      public String saveWhenIsNewEvent (final Long rentaId,
              final String eventFolio,
              final String choferId,
-             final String userId) throws NoDataFoundException, DataOriginException{
+             final String userId,
+             final Boolean generateTaskChofer
+             ) throws NoDataFoundException, DataOriginException{
+         
+        if (!generateTaskChofer) {
+            throw new NoDataFoundException(ApplicationConstants.MESSAGE_GENERATE_TASK_CHOFER_NO_ACTIVE);
+        }
         
         TaskCatalogVO taskCatalogVO = new TaskCatalogVO();
         taskCatalogVO.setRentaId(rentaId+"");

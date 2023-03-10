@@ -1,5 +1,6 @@
 package common.services;
 
+import common.constants.ApplicationConstants;
 import common.dao.TaskAlmacenUpdateDAO;
 import common.exceptions.DataOriginException;
 import common.exceptions.NoDataFoundException;
@@ -18,6 +19,8 @@ import org.apache.log4j.Logger;
 
 public class TaskAlmacenUpdateService {
     
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TaskAlmacenUpdateService.class.getName());
+    
     private TaskAlmacenUpdateService () {}
     
     private static final TaskAlmacenUpdateService SINGLE_INSTANCE = null;
@@ -34,12 +37,20 @@ public class TaskAlmacenUpdateService {
         return SINGLE_INSTANCE;
     }
     
-    public String saveWhenEventIsUpdated (final EstadoEvento eventStatusChange, 
+    public String saveWhenEventIsUpdated (
+            final EstadoEvento eventStatusChange, 
             final Tipo eventTypeChange,
             final Renta currentRenta,
             final Boolean updateItems,
             final Boolean generalDataUpdated,
-            final String userId)  throws NoDataFoundException, DataOriginException {
+            final String userId,
+            final Boolean generateTaskAlmacen
+    )  throws NoDataFoundException, DataOriginException {
+        
+        
+        if (!generateTaskAlmacen) {
+            throw new NoDataFoundException(ApplicationConstants.MESSAGE_GENERATE_TASK_ALMACEN_NO_ACTIVE);
+        }
         
         TaskCatalogVO taskCatalogVO = taskUtilityValidateUpdateService.validateAndBuild(
                 eventStatusChange,
@@ -120,7 +131,13 @@ public class TaskAlmacenUpdateService {
         return stringBuilder.toString();
     }
     
-    public String saveWhenIsNewEvent (Long rentaId, String folio, String userId) throws NoDataFoundException, DataOriginException{
+    public String saveWhenIsNewEvent (Long rentaId, String folio, String userId, 
+            final Boolean generateTaskAlmacen
+            ) throws NoDataFoundException, DataOriginException{
+               
+        if (!generateTaskAlmacen) {
+            throw new NoDataFoundException(ApplicationConstants.MESSAGE_GENERATE_TASK_ALMACEN_NO_ACTIVE);
+        }
         TaskCatalogVO taskCatalogVO = new TaskCatalogVO();
         taskCatalogVO.setRentaId(rentaId+"");
         taskCatalogVO.setStatusAlmacenTaskCatalog(StatusAlmacenTaskCatalog.NEW_FOLIO);

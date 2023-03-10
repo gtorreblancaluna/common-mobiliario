@@ -10,7 +10,7 @@ package common.exceptions;
  * @author gerardo torreblanca luna
  * handle exception in business layer
  */
-public class InvalidDataException extends Exception{
+public class InvalidDataException extends BusinessException{
     
     private transient Throwable cause;
     private transient String message;

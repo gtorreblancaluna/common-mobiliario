@@ -4,6 +4,9 @@ import common.constants.ApplicationConstants;
 import common.model.Renta;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -21,13 +24,23 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import java.text.Normalizer;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 public abstract class UtilityCommon {
+    
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UtilityCommon.class.getName());
+    
+    public static LocalDate getLocalDateFromString (final String date, final String formatDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatDate);
+        return LocalDate.parse(date, formatter);
+    }
         
     public static String removeAccents(String texto) {
         return Normalizer.normalize(texto, Normalizer.Form.NFD)
                 .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+
     }
     
     public static void selectCheckBoxWhenKeyPressedIsSpace (java.awt.event.KeyEvent evt, JTable table, int columnBoolean) {
