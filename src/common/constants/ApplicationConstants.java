@@ -3,6 +3,15 @@ package common.constants;
 
 public interface ApplicationConstants {
     
+    public static final String SIMPLE_DATE_FORMAT_SHORT = "dd/MM/yyyy";
+    public static final String DECIMAL_FORMAT_SHORT = "#,###,###,##0.00";
+    
+    public static final String FG_ACTIVE_TRUE = "1";
+    
+    public static final String FG_ACTIVE_FALSE = "0";
+    
+    public static final String ARIAL = "Arial";
+        
     public static final String MESSAGE_GENERATE_TASK_ALMACEN_NO_ACTIVE = 
             "Generar tareas a almacen esta desactivado. Puede activarlo en la ventana de Utilerias.";
     
@@ -140,6 +149,9 @@ public interface ApplicationConstants {
     public static final String RUTA_REPORTE_ORDEN_PROVEEDOR = "/reporte_proveedor.jasper";
     public static final String NOMBRE_REPORTE_ORDEN_PROVEEDOR = "/reporte_proveedor.pdf";
     public static final String JASPER_REPORT_COLLECTION_MATERIAL = "/reporteRecoleccion.jasper";
+    
+    public static final String NOMBRE_REPORTE_DETALLE_FOLIOS = "/reporte_detalle_folios.pdf";
+    public static final String JASPER_REPORT_DETALLE_FOLIOS = "/detalleFolios.jasper";
     
 
 }

@@ -4,9 +4,6 @@ import common.constants.ApplicationConstants;
 import common.model.Renta;
 import java.awt.Component;
 import java.awt.Dialog;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -26,11 +23,47 @@ import javax.swing.JTable;
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 
 public abstract class UtilityCommon {
     
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UtilityCommon.class.getName());
+    
+        public static void addJtableToPane (int sizeVertical, int sizeHorizontal, JPanel jPanel,JTable tableToAdd ) {
+        
+        JScrollPane jScrollPane = new JScrollPane();
+        jScrollPane.setViewportView(tableToAdd);
+        
+        javax.swing.GroupLayout tabPanelGeneralLayout = new javax.swing.GroupLayout(jPanel);
+        jPanel.setLayout(tabPanelGeneralLayout);
+        tabPanelGeneralLayout.setHorizontalGroup(
+            tabPanelGeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabPanelGeneralLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, sizeVertical, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        tabPanelGeneralLayout.setVerticalGroup(
+            tabPanelGeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabPanelGeneralLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, sizeHorizontal, Short.MAX_VALUE))
+        );
+    }
+    
+    public static void setTimeout(Runnable runnable, int delay){
+        new Thread(() -> {
+            try {
+                Thread.sleep(delay);
+                runnable.run();
+            }
+            catch (Exception e){
+                log.error(e);
+            }
+        }).start();
+    }
     
     public static LocalDate getLocalDateFromString (final String date, final String formatDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatDate);
