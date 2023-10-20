@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import common.model.Articulo;
+import common.model.AvailabilityItemResult;
 import common.model.CategoriaDTO;
 import common.model.Color;
 import org.apache.ibatis.session.SqlSession;
@@ -27,6 +28,32 @@ public class ItemDAO {
             return new ItemDAO();
         }
         return SINGLE_INSTANCE;
+    }
+    
+    public List<AvailabilityItemResult> obtenerDisponibilidadRentaPorConsulta (Map<String,Object> parameters) throws DataOriginException{
+        SqlSession session = sqlSessionFactory.openSession();
+        try {
+            
+            List<AvailabilityItemResult> availabilityItemResults;
+            
+            parameters.put("statusOrderFinish", ApplicationConstants.STATUS_ORDER_PROVIDER_FINISH);
+            parameters.put("statusOrder", ApplicationConstants.STATUS_ORDER_PROVIDER_ORDER);
+            parameters.put("typeOrderDetail", ApplicationConstants.TYPE_DETAIL_ORDER_SHOPPING);
+            
+            if (parameters.get("showByDeliveryDate") != null && Boolean.parseBoolean(parameters.get("showByDeliveryDate").toString())) {
+                availabilityItemResults = session.selectList("MapperArticulos.obtenerRentaPorDisponibilidadPorFechaDeEntrega",parameters);
+            } else if (parameters.get("showByReturnDate") != null && Boolean.parseBoolean(parameters.get("showByReturnDate").toString())) {
+                availabilityItemResults = session.selectList("MapperArticulos.obtenerRentaPorDisponibilidadPorFechaDeDevolucion",parameters);
+            } else {
+                availabilityItemResults = session.selectList("MapperArticulos.obtenerRentaPorDisponibilidad",parameters);
+            }
+                       
+            return availabilityItemResults;
+        } catch (Exception e){
+            throw new DataOriginException(e.getMessage(),e);
+        } finally {
+            session.close();
+        }
     }
     
     @SuppressWarnings("unchecked")

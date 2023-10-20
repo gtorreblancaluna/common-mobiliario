@@ -42,10 +42,9 @@
                 <if test="precio != null">precio=#{precio},</if>
                 <if test="comentario != null">comentario=#{comentario},</if>
                 <if test="status != null">status=#{status},</if>                
-                <if test="comentario != null">comentario=#{comentario},</if>
-                <if test="actualizado != null">precio=#{actualizado},</if>
-                <if test="tipo_orden_detalle_proveedor_id != null">tipo_orden_detalle_proveedor_id=#{tipo_orden_detalle_proveedor_id},</if>
-                <if test="fgActivo != null">fg_activo=#{fg_activo}</if>
+                <if test="actualizado != null">actualizado=#{actualizado},</if>
+                <if test="detailOrderProviderType != null">tipo_orden_detalle_proveedor_id=#{detailOrderProviderType.id},</if>
+                <if test="fgActivo != null">fg_activo=#{fgActivo}</if>
             </set>
         WHERE id = #{id}          
         

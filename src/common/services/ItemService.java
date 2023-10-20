@@ -2,13 +2,14 @@ package common.services;
 
 import common.constants.ApplicationConstants;
 import common.dao.ItemDAO;
+import common.exceptions.BusinessException;
 import common.exceptions.DataOriginException;
 import java.util.List;
 import java.util.Map;
 import common.model.Articulo;
+import common.model.AvailabilityItemResult;
 import common.model.CategoriaDTO;
 import common.model.Color;
-import org.apache.log4j.Logger;
 
 public class ItemService {
 
@@ -19,11 +20,23 @@ public class ItemService {
             return new ItemService();
         }
         return SINGLE_INSTANCE;
-    }
-    
+    }   
   
     private final ItemDAO itemDao = ItemDAO.getInstance();
-    private final static Logger LOGGER = Logger.getLogger(ItemService.class.getName());
+    
+    public List<AvailabilityItemResult> obtenerDisponibilidadRentaPorConsulta(Map<String, Object> parameters)throws BusinessException {
+         
+        try {
+            List<AvailabilityItemResult> availabilityItemResults = itemDao.obtenerDisponibilidadRentaPorConsulta(parameters);
+            for (AvailabilityItemResult availabilityItemResult : availabilityItemResults) {        
+              availabilityItemResult.getItem().setUtiles(utilesCalculate(availabilityItemResult.getItem()));  
+            }
+            return availabilityItemResults;
+        } catch (DataOriginException e) {
+            throw new BusinessException(e.getMessage(),e);
+        }
+                
+    } 
     
     public List<Articulo> obtenerArticulosActivos() {
         List<Articulo> articulos = itemDao.obtenerArticulosActivos();
