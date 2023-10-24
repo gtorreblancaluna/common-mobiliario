@@ -12,9 +12,10 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import lombok.Getter;
 
-public class TableDisponibilidadArticulosShow extends JTable {
+public class TableStatusProveedorBitacora extends JTable {
     
-    public TableDisponibilidadArticulosShow() {       
+    public TableStatusProveedorBitacora() {
+       
         this.setFont(new Font( ApplicationConstants.ARIAL , Font.PLAIN, 12 ));
         format();
     }
@@ -22,14 +23,11 @@ public class TableDisponibilidadArticulosShow extends JTable {
     @Getter
     public enum Column {
         
-        BOOLEAN(0,10,"",Boolean.class, true),
-        ID(1,10,"id",String.class, false),
-        CODE(2,120,"Código",String.class, false),
-        CATEGORY(3,120,"Categoría",String.class, false),
-        DESCRIPTION(4,120,"Descripción",String.class, false),
-        COLOR(5,60,"Color",String.class, false),
-        PRICE(6,60,"P.Unitario",String.class, false),
-        STOCK(7,60,"Stock",String.class, false);        
+        ID(0,10,"id",String.class, false),
+        STATUS(1,120,"Status",String.class, false),
+        COMMENT(2,120,"Comentario",String.class, false),
+        USER(3,80,"Usuario",String.class, false),
+        CREATED_AT(4,60,"Creado",String.class, false);
         
         private final int number;
         private final int size;
@@ -63,7 +61,9 @@ public class TableDisponibilidadArticulosShow extends JTable {
 
         public Boolean getIsEditable() {
             return isEditable;
-        }        
+        }
+        
+        
         
         public static String[] getColumnNames () {
             List<String> columnNames = new ArrayList<>();
@@ -103,17 +103,16 @@ public class TableDisponibilidadArticulosShow extends JTable {
                     .setPreferredWidth(column.getSize());
         }
         
-        this.getColumnModel().getColumn(Column.ID.getNumber()).setMaxWidth(0);
-        this.getColumnModel().getColumn(Column.ID.getNumber()).setMinWidth(0);
-        this.getColumnModel().getColumn(Column.ID.getNumber()).setPreferredWidth(0);        
+        this.getColumnModel().getColumn(Column.ID.getNumber()).setCellRenderer(center);
+        
               
         try {
             DefaultTableModel temp = (DefaultTableModel) this.getModel();
             temp.removeRow(temp.getRowCount() - 1);
         } catch (ArrayIndexOutOfBoundsException e) {
-            
+            ;
         }
-        
+
     }
     
 }

@@ -93,7 +93,7 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
         itemService = ItemService.getInstance();
         this.setLocationRelativeTo(null);
         this.lblEncontrados.setText("");
-        this.setTitle("Ver disponibilidad de articulos ");
+        this.setTitle("Ver disponibilidad de artículos");
         formato_tabla();
         formato_tabla_unicos();
         
@@ -207,7 +207,8 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
             availabilityItemResults = itemService.obtenerDisponibilidadRentaPorConsulta(parameters);
         } catch (Exception e) {
             Logger.getLogger(VerDisponibilidadArticulos.class.getName()).log(Level.SEVERE, null, e);
-            JOptionPane.showMessageDialog(null, "Ocurrio un inesperado\n "+e, "Error", JOptionPane.ERROR_MESSAGE); 
+            JOptionPane.showMessageDialog(this, ApplicationConstants.MESSAGE_UNEXPECTED_ERROR, 
+                    ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE); 
             return;
         }        
         
@@ -255,7 +256,7 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
           mensaje.append("Mostrando solo los negativos - ");
           mostrarSoloNegativosTablaUnicos();
         }
-        mensaje.append("Total de articulos: ").append(tablaArticulos.getRowCount()).append(" - ");
+        mensaje.append("Total de artículos: ").append(tablaArticulos.getRowCount()).append(" - ");
         mensaje.append("Folios únicos: ").append(getDistictByFolioFromTable()).append(" - ");
         this.lblEncontrados.setText(mensaje.toString());
           
@@ -363,7 +364,6 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
         tablaArticulos = new javax.swing.JTable(){public boolean isCellEditable(int rowIndex,int colIndex){return false;}};
         jScrollPane2 = new javax.swing.JScrollPane();
         tablaArticulosUnicos = new javax.swing.JTable(){public boolean isCellEditable(int rowIndex,int colIndex){return false;}};
-        jbtnExportarDetalle = new javax.swing.JButton();
         jbtnExportarUnicos = new javax.swing.JButton();
 
         setLocationRelativeTo(lblEncontrados);
@@ -374,12 +374,9 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
             }
         });
 
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        lblEncontrados.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        lblEncontrados.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblEncontrados.setForeground(new java.awt.Color(204, 0, 51));
         lblEncontrados.setText("jLabel1");
-        jPanel2.add(lblEncontrados, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 590, 790, 20));
 
         tablaArticulos.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 12)); // NOI18N
         tablaArticulos.setModel(new javax.swing.table.DefaultTableModel(
@@ -423,27 +420,40 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
 
         jtbPaneVerDetalle.addTab("Unicos", jScrollPane2);
 
-        jPanel2.add(jtbPaneVerDetalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 1170, 560));
-
-        jbtnExportarDetalle.setText("Exportar tabla detalle a Excel");
-        jbtnExportarDetalle.setToolTipText("Exportar tabla detalle a Excel");
-        jbtnExportarDetalle.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jbtnExportarDetalle.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbtnExportarDetalleActionPerformed(evt);
-            }
-        });
-        jPanel2.add(jbtnExportarDetalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 590, -1, -1));
-
-        jbtnExportarUnicos.setText("Exportar tabla unicos a Excel");
-        jbtnExportarUnicos.setToolTipText("Exportar tabla unicos a Excel");
-        jbtnExportarUnicos.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jbtnExportarUnicos.setText("Exportar a Excel");
+        jbtnExportarUnicos.setToolTipText("Exportar a Excel");
+        jbtnExportarUnicos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jbtnExportarUnicos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbtnExportarUnicosActionPerformed(evt);
             }
         });
-        jPanel2.add(jbtnExportarUnicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 590, -1, -1));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtbPaneVerDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, 1170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lblEncontrados, javax.swing.GroupLayout.DEFAULT_SIZE, 1043, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jbtnExportarUnicos)
+                        .addContainerGap())))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jtbPaneVerDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(8, 8, 8)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblEncontrados, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jbtnExportarUnicos))
+                .addGap(5, 5, 5))
+        );
 
         add(jPanel2, java.awt.BorderLayout.CENTER);
 
@@ -467,16 +477,16 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_tablaArticulosUnicosMouseClicked
 
-    private void jbtnExportarDetalleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnExportarDetalleActionPerformed
-        // TODO add your handling code here:
-        utilityService = UtilityService.getInstance();
-        utilityService.exportarExcel(tablaArticulos);
-    }//GEN-LAST:event_jbtnExportarDetalleActionPerformed
-
     private void jbtnExportarUnicosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnExportarUnicosActionPerformed
-        
+        int index = jtbPaneVerDetalle.getSelectedIndex();
         utilityService = UtilityService.getInstance();
-        utilityService.exportarExcel(tablaArticulosUnicos);
+        System.out.println(" >>> INDEX: "+index);
+        if (index == 0) {
+            utilityService.exportarExcel(tablaArticulos);
+        } else {
+            utilityService.exportarExcel(tablaArticulosUnicos);
+        }        
+        
     }//GEN-LAST:event_jbtnExportarUnicosActionPerformed
 
     /**
@@ -501,7 +511,6 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JButton jbtnExportarDetalle;
     private javax.swing.JButton jbtnExportarUnicos;
     private javax.swing.JTabbedPane jtbPaneVerDetalle;
     private javax.swing.JLabel lblEncontrados;
