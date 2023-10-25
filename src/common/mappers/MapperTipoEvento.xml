@@ -12,7 +12,11 @@
     </resultMap>   
   
     <select id="getTipoEvento" resultMap="resultMapTipoEvento" >
-        SELECT * FROM tipo
+        SELECT 
+        tipo.id_tipo,
+        tipo.tipo
+        FROM tipo tipo 
+        ORDER BY tipo.tipo
     </select>   
     
     

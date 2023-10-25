@@ -10,6 +10,8 @@ import common.model.Articulo;
 import common.model.AvailabilityItemResult;
 import common.model.CategoriaDTO;
 import common.model.Color;
+import common.model.ItemByFolioResultQuery;
+import common.model.SearchItemByFolioParams;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
@@ -28,6 +30,20 @@ public class ItemDAO {
             return new ItemDAO();
         }
         return SINGLE_INSTANCE;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<ItemByFolioResultQuery> getItemsByFolio(SearchItemByFolioParams searchItemByFolioParams) throws DataOriginException{
+        SqlSession session = sqlSessionFactory.openSession();
+        try {
+           return (List<ItemByFolioResultQuery>) 
+                   session.selectList("MapperArticulos.getItemsByFolio",searchItemByFolioParams);
+        }catch(Exception ex){
+            log.error(ex);
+            throw new DataOriginException(ex.getMessage(),ex);
+        } finally {
+            session.close();
+        }
     }
     
     public List<AvailabilityItemResult> obtenerDisponibilidadRentaPorConsulta (Map<String,Object> parameters) throws DataOriginException{

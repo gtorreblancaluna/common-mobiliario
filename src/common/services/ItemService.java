@@ -10,6 +10,8 @@ import common.model.Articulo;
 import common.model.AvailabilityItemResult;
 import common.model.CategoriaDTO;
 import common.model.Color;
+import common.model.ItemByFolioResultQuery;
+import common.model.SearchItemByFolioParams;
 
 public class ItemService {
 
@@ -23,6 +25,28 @@ public class ItemService {
     }   
   
     private final ItemDAO itemDao = ItemDAO.getInstance();
+    
+    public List<ItemByFolioResultQuery> getItemsByFolio(SearchItemByFolioParams searchItemByFolioParams) throws DataOriginException{
+        
+        List<ItemByFolioResultQuery> itemByFolioResultQuerys
+                = itemDao.getItemsByFolio(searchItemByFolioParams);
+        
+        itemByFolioResultQuerys
+                .stream()
+                .forEach(item -> {
+                    float unitPrice = item.getItemUnitPrice() != null ? item.getItemUnitPrice() : 0;
+                    float itemAmount = item.getItemAmount() != null ? item.getItemAmount() : 0;
+                    float total = itemAmount * unitPrice;
+                    if (item.getItemDiscountRate() != null && item.getItemDiscountRate() > 0) {
+                        float percentaje = item.getItemDiscountRate() / 100;
+                        float discount = total * percentaje;
+                        total = total - discount;
+                    }
+                    item.setItemSubTotal(total);
+                });
+        
+        return itemByFolioResultQuerys;
+    }
     
     public List<AvailabilityItemResult> obtenerDisponibilidadRentaPorConsulta(Map<String, Object> parameters)throws BusinessException {
          

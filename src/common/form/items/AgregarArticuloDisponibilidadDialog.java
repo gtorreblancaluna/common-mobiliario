@@ -60,12 +60,12 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
     
     private void formato_tabla() {
         
-        Object[][] data = {{ApplicationConstants.BLANK_SPACE, 
-            ApplicationConstants.BLANK_SPACE, 
-            ApplicationConstants.BLANK_SPACE, 
-            ApplicationConstants.BLANK_SPACE, 
-            ApplicationConstants.BLANK_SPACE,
-            ApplicationConstants.BLANK_SPACE}};
+        Object[][] data = {{ApplicationConstants.EMPTY_STRING, 
+            ApplicationConstants.EMPTY_STRING, 
+            ApplicationConstants.EMPTY_STRING, 
+            ApplicationConstants.EMPTY_STRING, 
+            ApplicationConstants.EMPTY_STRING,
+            ApplicationConstants.EMPTY_STRING}};
         String[] columnNames = {"id","Código", "Categoría", "Descripción", "Color", "P.Unitario", "Stock"};       
         DefaultTableModel TableModel = new DefaultTableModel(data, columnNames);
         itemsTable.setModel(TableModel);

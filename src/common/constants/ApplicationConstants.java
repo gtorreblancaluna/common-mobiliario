@@ -5,6 +5,7 @@ public interface ApplicationConstants {
     
     public static final String SIMPLE_DATE_FORMAT_SHORT = "dd/MM/yyyy";
     public static final String DECIMAL_FORMAT_SHORT = "#,###,###,##0.00";
+    public static final String INTEGER_FORMAT = "#,###,###,##0";
     
     public static final String FG_ACTIVE_TRUE = "1";
     
@@ -12,7 +13,7 @@ public interface ApplicationConstants {
     
     public static final String ARIAL = "Arial";
     
-    public static final String BLANK_SPACE = "";
+    public static final String EMPTY_STRING = "";
         
     public static final String MESSAGE_GENERATE_TASK_ALMACEN_NO_ACTIVE = 
             "Generar tareas a almacen esta desactivado. Puede activarlo en la ventana de Utilerias.";

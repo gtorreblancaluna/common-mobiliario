@@ -12,7 +12,11 @@
     </resultMap>   
   
     <select id="getEstadoEvento" resultMap="resultMapEstadoEvento" >
-        SELECT * FROM estado
+        SELECT 
+        estado.id_estado, 
+        estado.descripcion 
+        FROM estado estado 
+        ORDER BY estado.descripcion
     </select>   
     
     
