@@ -79,7 +79,7 @@ public class TableViewOrdersProviders extends JTable {
        SUB_TOTAL(9,"Subtotal",80,String.class, false),
        PAYMENTS(10,"Pagos",80,String.class, false),
        TOTAL(11,"Total",80,String.class, false),
-       EVENT_DATE(12,"Fecha Evento",80,String.class, false);
+       EVENT_DATE(12,"Fecha evento",80,String.class, false);
        
        private final int number;
        private final String description;

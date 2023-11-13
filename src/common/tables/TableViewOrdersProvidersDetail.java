@@ -81,7 +81,7 @@ public class TableViewOrdersProvidersDetail extends JTable {
        ORDER_SUPPLIER_DETAIL_ID(1,"detalle_orden_proveedor_id",10,String.class, false),
        RENTA_ID(2,"renta_id",10,String.class, false),
        FOLIO(3,"Folio",20,String.class, false),
-       PRODUCT(4,"Articulo",60,String.class, false),
+       PRODUCT(4,"Artículo",60,String.class, false),
        AMOUNT(5,"Cantidad",40,String.class, false),
        PRICE(6,"Precio",40,String.class, false),
        IMPORT(7,"Importe",40,String.class, false),

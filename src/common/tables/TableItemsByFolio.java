@@ -83,14 +83,14 @@ public class TableItemsByFolio extends JTable {
        RENTA_ID(0,"renta_id",20,String.class, false), 
        FOLIO(1,"Folio",20,String.class, false),
        AMOUNT(2,"Cantidad",20,String.class, false),
-       ITEM(3,"Articulo",80,String.class, false),
+       ITEM(3,"Artículo",80,String.class, false),
        PRICE(4,"Precio",40,String.class, false),
        DISCOUNT(5,"Descuento %",40,String.class, false),
        SUBTOTAL(6,"Importe",40,String.class, false),
        DELIVERY_DATE(7,"Fecha entrega",80,String.class, false),
-       EVENT_DATE(8,"Fecha creacion evento",80,String.class, false),
-       EVENT_TYPE(9,"Tipo Evento",80,String.class, false),
-       EVENT_STATUS(10,"Estado Evento",80,String.class, false);
+       EVENT_DATE(8,"Fecha creación evento",80,String.class, false),
+       EVENT_TYPE(9,"Tipo evento",80,String.class, false),
+       EVENT_STATUS(10,"Estado evento",80,String.class, false);
        
        private final int number;
        private final String description;

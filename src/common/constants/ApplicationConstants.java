@@ -135,6 +135,8 @@ public interface ApplicationConstants {
     public static final String DS_MESSAGE_FAIL_LOGIN = "Contrase\u00F1a incorrecta o usuario no encontrado";
     public static final String TITLE_MESSAGE_FAIL_LOGIN = "Error al inciar sesion";
     
+    public static final String MESSAGE_ACTION_DENIED = "Acción denegada, solo un usuario con perfil administrador, puede realizar este proceso";
+    
     // ****************************************************************************************
     // nombres de reportes jasper
     public static final String RUTA_REPORTE_ENTREGAS = "/reporteEntrega.jasper";

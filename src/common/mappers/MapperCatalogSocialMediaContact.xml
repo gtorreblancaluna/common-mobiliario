@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="MapperCatalogSocialMediaContact">
+  
+    <resultMap id="resultMapCatalogSocialMediaContactModel" type="common.model.CatalogSocialMediaContactModel">        
+        
+        <result property="id" column="id"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>    
+        <result property="fgActive" column="fg_active"/>
+        <result property="updatedAt" column="updated_at"/>
+
+    </resultMap>   
+  
+    <select id="getAllCatalogSocialMediaContactModel" resultMap="resultMapCatalogSocialMediaContactModel" >
+        SELECT * 
+        FROM catalog_social_media_contact
+        WHERE fg_active = 1
+        ORDER BY description
+    </select>
+    
+    <update id="updateCatalogSocialMedia" parameterType="common.model.CatalogSocialMediaContactModel">
+        UPDATE catalog_social_media_contact catalog       
+        <set>
+            <if test="description != null">catalog.description=#{description}</if>
+            <if test="fgActive != null">catalog.fg_active=#{fgActive}</if>
+            <if test="updatedAt != null">catalog.updated_at=#{updatedAt}</if>
+        </set>
+        WHERE catalog.id = #{id}
+
+    </update>
+    
+    <insert id="insertCatalogSocialMedia" parameterType="common.model.CatalogSocialMediaContactModel">
+        INSERT INTO catalog_social_media_contact 
+        (description,created_at,updated_at)
+        VALUES (#{description},#{createdAt},#{updatedAt})
+
+    </insert>
+     
+</mapper>

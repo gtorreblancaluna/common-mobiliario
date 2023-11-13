@@ -1,9 +1,15 @@
 package common.utilities;
 
 import common.constants.ApplicationConstants;
+import static common.constants.ApplicationConstants.LIMIT_GENERATE_PDF;
+import common.exceptions.BusinessException;
+import common.model.DatosGenerales;
 import common.model.Renta;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dialog;
+import java.io.File;
+import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -23,11 +29,70 @@ import javax.swing.JTable;
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 
 public abstract class UtilityCommon {
+    
+    // get value from first row selected.
+    public static String getIdSelected (
+            JTable table,Integer columBooleanNumber, Integer columValueNumber) {
+       String value = null;
+        
+        for (int i = 0; i < table.getRowCount(); i++) {
+            if (Boolean.parseBoolean(
+                    table.getValueAt(i, columBooleanNumber).toString())) {
+                value = table.getValueAt(i, columValueNumber).toString();
+                break;
+            }
+        }
+        return value;
+   }
+    
+    public static List<String> getIdsSelected (
+            JTable table,Integer columBooleanNumber, Integer columIDNumber) {
+       List<String> ids = new ArrayList<>();
+        
+        for (int i = 0; i < table.getRowCount(); i++) {
+            if (Boolean.parseBoolean(
+                    table.getValueAt(i, columBooleanNumber).toString())) {
+                ids.add(
+                        table.getValueAt(i, columIDNumber).toString()
+                );
+            }
+        }
+        return ids;
+   }
+    
+    public static void validateSelectCheckboxInTable(JTable table, Integer columNumber) throws BusinessException {
+        
+        int selectRows = 0;
+        
+        for (int i = 0; i < table.getRowCount(); i++) {
+            if (Boolean.parseBoolean(table.getValueAt(i, columNumber).toString())) {
+                selectRows++;
+            }
+        }
+        
+        if (selectRows > LIMIT_GENERATE_PDF) {
+            throw new BusinessException ("Limite excedido de operaciones ["+ LIMIT_GENERATE_PDF +"]");
+        }
+        
+        if (selectRows <= 0) {
+            throw new BusinessException ("Marca el CHECKBOX de una o mas filas para continuar");
+        }
+    }
     
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UtilityCommon.class.getName());
     
@@ -51,6 +116,41 @@ public abstract class UtilityCommon {
                 .addContainerGap()
                 .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, sizeHorizontal, Short.MAX_VALUE))
         );
+    }
+        
+    public static void generatePDFOrderProvider (String orderId, Connection connectionDB,DatosGenerales datosGenerales,String pathLocation) {
+             
+        JasperPrint jasperPrint;
+        try {            
+            String archivo = pathLocation+ApplicationConstants.RUTA_REPORTE_ORDEN_PROVEEDOR;
+            System.out.println("Cargando desde: " + archivo);
+            if (archivo == null) {
+                JOptionPane.showMessageDialog(null, "No se encuentra el Archivo jasper");
+                return;
+            }
+            JasperReport masterReport = (JasperReport) JRLoader.loadObjectFromFile(archivo);  
+           
+            
+            Map parametros = new HashMap<>();
+            parametros.put("ID_ORDEN",orderId);
+            parametros.put("NOMBRE_EMPRESA",datosGenerales.getCompanyName());
+            parametros.put("DIRECCION_EMPRESA",datosGenerales.getAddress1());
+            parametros.put("TELEFONOS_EMPRESA",datosGenerales.getAddress2());
+            parametros.put("EMAIL_EMPRESA",datosGenerales.getAddress3() != null ? datosGenerales.getAddress3() : "");
+            //guardamos el parámetro
+            parametros.put("URL_IMAGEN",pathLocation+ApplicationConstants.LOGO_EMPRESA );
+           
+            jasperPrint = JasperFillManager.fillReport(masterReport, parametros, connectionDB);
+            JasperExportManager.exportReportToPdfFile(jasperPrint, pathLocation+ApplicationConstants.NOMBRE_REPORTE_ORDEN_PROVEEDOR);
+            File file2 = new File(pathLocation+ApplicationConstants.NOMBRE_REPORTE_ORDEN_PROVEEDOR);
+            Desktop.getDesktop().open(file2);
+            
+        } catch (Exception e) {
+            log.error(e);
+            System.out.println("Mensaje de Error:" + e.toString());
+            JOptionPane.showMessageDialog(null, "Error cargando el reporte maestro: " + e.getMessage() + "\n" + e);
+        }
+        
     }
     
     public static void setTimeout(Runnable runnable, int delay){

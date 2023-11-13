@@ -32,7 +32,8 @@ public class TaskDeliveryChoferUpdateService {
         return SINGLE_INSTANCE;
     }
     
-    public String saveWhenEventIsUpdated (final EstadoEvento eventStatusChange,
+    public String saveWhenEventIsUpdated (
+            final EstadoEvento eventStatusChange,
             final Tipo eventTypeChange,
             final Renta currentRenta,
             final Boolean updateItems,
@@ -103,7 +104,8 @@ public class TaskDeliveryChoferUpdateService {
         return message;
     }
     
-     public String saveWhenIsNewEvent (final Long rentaId,
+     public String saveWhenIsNewEvent (
+             final Long rentaId,
              final String eventFolio,
              final String choferId,
              final String userId,

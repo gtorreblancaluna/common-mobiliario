@@ -1,5 +1,6 @@
 package common.model;
 
+import java.sql.Timestamp;
 import lombok.Data;
 
 
@@ -17,4 +18,9 @@ public class Cliente {
     private String localidad;
     private String rfc;
     private String activo;
+    private Timestamp birthday;
+    private CatalogSocialMediaContactModel socialMedia;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    
 }

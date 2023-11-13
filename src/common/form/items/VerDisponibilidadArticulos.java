@@ -281,7 +281,7 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
      
     public void formato_tabla() {
         Object[][] data = {{"","","", "", "", "", "", "", "","","","","",""}};
-        String[] columnNames = {"id_articulo", "cantidad pedido", "Utiles", "articulo", "fecha evento","fecha elaboración","fecha entrega","hora entrega", "fecha_devolucion","hora devoluci\u00F3n" ,"cliente","folio","descripci\u00F3n evento","tipo","estado"};
+        String[] columnNames = {"id_articulo", "Cantidad pedido", "Utiles", "Artículo", "Fecha evento","Fecha elaboración","Fecha entrega","Hora entrega", "Fecha_devolucion","Hora devoluci\u00F3n" ,"Cliente","Folio","Descripci\u00F3n evento","Tipo","Estado"};
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
         tablaArticulos.setModel(tableModel);
         
@@ -315,7 +315,7 @@ public final class VerDisponibilidadArticulos extends java.awt.Dialog {
      public void formato_tabla_unicos() {
         
          Object[][] data = {{"", "", "", "", ""}};
-        String[] columnNames = {"id_articulo", "Cantidad pedido", "Utiles","disponible", "articulo"};
+        String[] columnNames = {"id_articulo", "Cantidad pedido", "Utiles","Disponible", "Artículo"};
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
         tablaArticulosUnicos.setModel(tableModel);
         
