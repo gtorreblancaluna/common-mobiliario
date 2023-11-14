@@ -25,8 +25,8 @@
     <update id="updateCatalogSocialMedia" parameterType="common.model.CatalogSocialMediaContactModel">
         UPDATE catalog_social_media_contact catalog       
         <set>
-            <if test="description != null">catalog.description=#{description}</if>
-            <if test="fgActive != null">catalog.fg_active=#{fgActive}</if>
+            <if test="description != null">catalog.description=#{description},</if>
+            <if test="fgActive != null">catalog.fg_active=#{fgActive},</if>
             <if test="updatedAt != null">catalog.updated_at=#{updatedAt}</if>
         </set>
         WHERE catalog.id = #{id}
