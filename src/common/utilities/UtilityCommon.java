@@ -45,6 +45,10 @@ import net.sf.jasperreports.engine.util.JRLoader;
 
 public abstract class UtilityCommon {
     
+    public static String onlyNumbers (String text) {
+        return text.replaceAll("[^0-9]", "");
+    }
+    
     // get value from first row selected.
     public static String getIdSelected (
             JTable table,Integer columBooleanNumber, Integer columValueNumber) {

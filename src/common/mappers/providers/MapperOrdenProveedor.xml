@@ -19,7 +19,7 @@
         <result property="orderComment" column="comentario"/>
         <result property="orderDetailType" column="tipo_detalle_orden"/>
         <result property="creado" column="creado"/>
-        
+        <result property="detailComment" column="detalle_comentario"/>  
     </resultMap>
     
     <resultMap id="resultMapTypeDetailOrderProvider" type="common.model.providers.DetailOrderProviderType">
@@ -43,8 +43,7 @@
         <result property="articulo.descripcion" column="articulo_descripcion"/>
         
         <result property="articulo.color.color" column="articulo_color"/>  
-        <result property="detailOrderProviderType.description" column="tipo_descripcion"/>     
-        <result property="detailOrderProviderType.id" column="tipo_id"/>         
+        <result property="detailOrderProviderType.description" column="tipo_descripcion"/>       
         
     </resultMap>
   
@@ -89,7 +88,8 @@
             CONCAT(p.nombre," ",p.apellidos) AS proveedor_nombre,
             o.comentario,
             tipo_detalle.description AS tipo_detalle_orden,
-            o.creado
+            o.creado,
+            d.comentario AS detalle_comentario
         FROM detalle_orden_proveedor d
         INNER JOIN orden_proveedor o ON (o.id = d.id_orden_proveedor)
         INNER JOIN renta r ON (r.id_renta = o.id_renta)

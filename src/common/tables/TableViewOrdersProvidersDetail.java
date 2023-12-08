@@ -88,7 +88,7 @@ public class TableViewOrdersProvidersDetail extends JTable {
        EVENT_DATE(8,"Fecha evento",60,String.class, false),
        USER(9,"Usuario",80,String.class, false),
        SUPPLIER(10,"Proveedor",80,String.class, false),
-       ORDER_COMMENT(11,"Comentario orden",80,String.class, false),
+       ORDER_COMMENT(11,"Comentario",80,String.class, false),
        ORDER_DETAIL_TYPE(12,"Tipo",50,String.class, false),
        CREATED_AT(13,"Creado",60,String.class, false);
        

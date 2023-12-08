@@ -19,6 +19,7 @@ public class DetailOrderSupplierQueryResult {
     private String user;
     private String supplier;
     private String orderComment;
+    private String detailComment;
     private String orderDetailType;
     private Timestamp creado;
     
