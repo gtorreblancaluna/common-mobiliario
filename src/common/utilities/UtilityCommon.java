@@ -10,6 +10,7 @@ import java.awt.Desktop;
 import java.awt.Dialog;
 import java.io.File;
 import java.sql.Connection;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -44,6 +45,22 @@ import net.sf.jasperreports.engine.util.JRLoader;
 
 
 public abstract class UtilityCommon {
+    
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    
+    public static void pushNotification(final String notification,
+            List<String> listNotifications, javax.swing.JTextArea txtAreaNotifications){
+        StringBuilder messages = new StringBuilder();
+        
+        String date = simpleDateFormat.format(new Timestamp(System.currentTimeMillis()));
+        listNotifications.add(date+" >> "+notification);
+        listNotifications.stream().forEach(t -> {
+            messages.append(t);
+            messages.append("\n");
+        });      
+        txtAreaNotifications.setText(null);
+        txtAreaNotifications.setText(messages+"");
+    }
     
     public static String onlyNumbers (String text) {
         return text.replaceAll("[^0-9]", "");

@@ -187,6 +187,12 @@
             INNER JOIN usuarios u ON (u.id_usuarios = o.id_usuario)
             INNER JOIN proveedores p ON (p.id = o.id_proveedores)
         WHERE o.fg_activo = '1'
+        <if test="orders != null and orders != '' ">
+            <foreach item="item" index="index" collection="orders"
+                open="AND o.id IN (" separator="," close=")" >
+                        #{item}
+            </foreach>
+        </if> 
         <if test="orderId != null and orderId != '' ">
             AND o.id = #{orderId}
         </if> 

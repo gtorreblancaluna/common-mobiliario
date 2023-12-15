@@ -2,9 +2,10 @@ package common.model.providers;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
+import lombok.Data;
 
-
-
+@Data
 public class ParameterOrderProvider {
     
     private Integer orderId;
@@ -16,61 +17,7 @@ public class ParameterOrderProvider {
     private String nameProvider;
     private String status;
     private Integer folioRenta;
-
-    public String getInitEventDate() {
-        return initEventDate;
-    }
-
-    public void setInitEventDate(String initEventDate) {
-        this.initEventDate = initEventDate;
-    }
-
-    public String getEndEventDate() {
-        return endEventDate;
-    }
-
-    public void setEndEventDate(String endEventDate) {
-        this.endEventDate = endEventDate;
-    }
-
-   
-
-    
-    
-
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
-    }
-    
-    
-
-    public Integer getFolioRenta() {
-        return folioRenta;
-    }
-
-    public void setFolioRenta(Integer folioRenta) {
-        this.folioRenta = folioRenta;
-    }
-    
-    
-
-    public Integer getLimit() {
-        return limit;
-    }
-
-    public void setLimit(Integer limit) {
-        this.limit = limit;
-    }
-
-   
-
-    public Timestamp getInitDate() {
-        return initDate;
-    }
+    private List<String> orders;
 
     public void setInitDate(Timestamp initDate) {
         Calendar now = Calendar.getInstance();
@@ -83,10 +30,6 @@ public class ParameterOrderProvider {
         this.initDate = initDate;
     }
 
-    public Timestamp getEndDate() {
-        return endDate;
-    }
-
     public void setEndDate(Timestamp endDate) {
         Calendar now = Calendar.getInstance();
         now.setTimeInMillis(endDate.getTime());
@@ -96,19 +39,6 @@ public class ParameterOrderProvider {
         now.set(Calendar.MILLISECOND, 59);
         endDate.setTime(now.getTimeInMillis());
         this.endDate = endDate;
-    }
-
-   
-    public String getNameProvider() {
-        return nameProvider;
-    }
-
-    public void setNameProvider(String nameProvider) {
-        this.nameProvider = nameProvider.toUpperCase().trim();
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public void setStatus(String status) {
