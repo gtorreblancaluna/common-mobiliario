@@ -28,6 +28,79 @@ public class OrdenProveedor {
     private Float total;
 
     
+    public OrdenProveedor copy() {
+        OrdenProveedor order = new OrdenProveedor();
+        order.setId(this.id);
+        order.setRenta(this.renta);
+        order.setUsuario(this.usuario);
+        order.setProveedor(this.proveedor);
+        order.setFgActivo(this.fgActivo);
+        order.setStatus(this.status);
+        order.setStatusDescription(this.statusDescription);
+        order.setCreado(this.creado);
+        order.setActualizado(this.actualizado);
+        order.setDetalleOrdenProveedorList(this.detalleOrdenProveedorList);
+        order.setPagosProveedor(this.pagosProveedor);
+        order.setComentario(this.comentario);
+        order.setAbonos(this.abonos);
+        order.setTotal(this.total);
+	return order;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setRenta(Renta renta) {
+        this.renta = renta;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
+    }
+
+    public void setFgActivo(String fgActivo) {
+        this.fgActivo = fgActivo;
+    }
+
+    public void setStatusDescription(String statusDescription) {
+        this.statusDescription = statusDescription;
+    }
+
+    public void setCreado(Timestamp creado) {
+        this.creado = creado;
+    }
+
+    public void setActualizado(Timestamp actualizado) {
+        this.actualizado = actualizado;
+    }
+
+    public void setDetalleOrdenProveedorList(List<DetalleOrdenProveedor> detalleOrdenProveedorList) {
+        this.detalleOrdenProveedorList = detalleOrdenProveedorList;
+    }
+
+    public void setPagosProveedor(List<PagosProveedor> pagosProveedor) {
+        this.pagosProveedor = pagosProveedor;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
+    }
+
+    public void setAbonos(Float abonos) {
+        this.abonos = abonos;
+    }
+
+    public void setTotal(Float total) {
+        this.total = total;
+    }
+    
+    
+    
 
     public void setStatus(String status) {
         

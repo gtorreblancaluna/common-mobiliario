@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class OrderProviderCopyParameter {
-    private String currentFolio;
     private List<String> orders;
+    private Integer usuarioId;
 }

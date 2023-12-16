@@ -160,6 +160,14 @@ public class OrderProviderService {
      
     }
     
+    public List<DetalleOrdenProveedor> getDetailProviderByOrderId(Long orderId)throws BusinessException{
+        try{
+            return orderProviderDAO.getDetailOrderByOrderId(orderId);
+        }catch(DataOriginException e){
+            throw new BusinessException(e.getMessage());
+        }
+    }
+    
     public List<DetalleOrdenProveedor> getDetailProvider(Map<String,Object> map)throws BusinessException{
         try{
          return orderProviderDAO.getDetailProvider(map);

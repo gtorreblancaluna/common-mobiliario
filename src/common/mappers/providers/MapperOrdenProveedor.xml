@@ -43,6 +43,7 @@
         <result property="articulo.descripcion" column="articulo_descripcion"/>
         
         <result property="articulo.color.color" column="articulo_color"/>  
+        <result property="detailOrderProviderType.id" column="tipo_id"/>
         <result property="detailOrderProviderType.description" column="tipo_descripcion"/>       
         
     </resultMap>
@@ -63,6 +64,7 @@
         <result property="renta.descripcion" column="renta_descripcion"/>
         <result property="renta.fechaEvento" column="renta_fecha_evento"/>
         <!-- datos usuario -->
+        <result property="usuario.usuarioId" column="usuario_id"/>
         <result property="usuario.nombre" column="usuario_nombre"/>
         <result property="usuario.apellidos" column="usuario_apellidos"/>
         <!-- datos proveedor -->
@@ -164,6 +166,7 @@
             r.folio AS renta_folio,
             r.descripcion AS renta_descripcion,
             r.fecha_evento AS renta_fecha_evento,
+            u.id_usuarios AS usuario_id,
             u.nombre AS usuario_nombre,
             u.apellidos AS usuario_apellidos,
             p.id AS proveedor_id,

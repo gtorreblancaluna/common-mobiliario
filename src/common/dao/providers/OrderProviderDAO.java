@@ -68,6 +68,20 @@ public class OrderProviderDAO {
      
      }
      
+    public List<DetalleOrdenProveedor> getDetailOrderByOrderId(Long orderId)throws DataOriginException{
+
+        SqlSession session = sqlSessionFactory.openSession();
+        try{ 
+            return (List<DetalleOrdenProveedor>) session.selectList("MapperOrdenProveedor.getDetailOrderByOrderId",orderId);    
+        }catch(Exception ex){
+            log.error(ex);
+            throw new DataOriginException(ex.getMessage(),ex.getCause());
+        }finally{
+            session.close();
+        }         
+     
+     }
+     
       public OrdenProveedor getOrderById(Long id)throws DataOriginException{
          OrdenProveedor orden = new OrdenProveedor();
          SqlSession session = sqlSessionFactory.openSession();
@@ -120,11 +134,14 @@ public class OrderProviderDAO {
             session.close();
         }
         
-        for(DetalleOrdenProveedor detail : orden.getDetalleOrdenProveedorList()){
-            detail.setCreado(new Timestamp(System.currentTimeMillis()));
-            detail.setActualizado(new Timestamp(System.currentTimeMillis()));
-            detail.setIdOrdenProveedor(orden.getId());
-            saveOrderDetail(detail);
+        if (orden.getDetalleOrdenProveedorList() != null && 
+                !orden.getDetalleOrdenProveedorList().isEmpty()) {
+            for(DetalleOrdenProveedor detail : orden.getDetalleOrdenProveedorList()){
+                detail.setCreado(new Timestamp(System.currentTimeMillis()));
+                detail.setActualizado(new Timestamp(System.currentTimeMillis()));
+                detail.setIdOrdenProveedor(orden.getId());
+                saveOrderDetail(detail);
+            }
         }
     }
      
@@ -161,11 +178,14 @@ public class OrderProviderDAO {
             session.close();
         }
         
-        for(DetalleOrdenProveedor detail : orden.getDetalleOrdenProveedorList()){
-            detail.setCreado(new Timestamp(System.currentTimeMillis()));
-            detail.setActualizado(new Timestamp(System.currentTimeMillis()));
-            detail.setIdOrdenProveedor(orden.getId());
-            saveOrderDetail(detail);
+        if (orden.getDetalleOrdenProveedorList() != null && 
+                !orden.getDetalleOrdenProveedorList().isEmpty()) {
+            for(DetalleOrdenProveedor detail : orden.getDetalleOrdenProveedorList()){
+                detail.setCreado(new Timestamp(System.currentTimeMillis()));
+                detail.setActualizado(new Timestamp(System.currentTimeMillis()));
+                detail.setIdOrdenProveedor(orden.getId());
+                saveOrderDetail(detail);
+            }
         }
     }
     
