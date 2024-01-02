@@ -19,6 +19,7 @@ import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
@@ -38,6 +39,8 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
     private String folioToCopy;
     private Integer rentaIdToCopy;
     private final RentaService rentaService;
+    private final String TOOL_TIP_TEX_BNT_COPY = "Ingresa el folio para copiar las ordenes.";
+    private final String TOOL_TIP_TEX_BNT_COPY_SUCCESS = "Copiar ordenes.";
 
     public OrderProviderCopyFormDialog(java.awt.Frame parent, boolean modal, 
             OrderProviderCopyParameter orderProviderCopyParameter) {
@@ -55,37 +58,10 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
         getInitialOrders();
         addEscapeListener();
         successfulChangesDetected = false;
-        addKeyListener();
-        this.btnCopy.setEnabled(false);
-        lblInfo.setText("");
+        disableBtnCopy();
+        lblInfo.setText("Ingresa el folio al que quieres copiar las ordenes.");
         
-    }
-    
-    private void addKeyListener () {
-        txtFolio.addKeyListener(new java.awt.event.KeyAdapter() {
-            @Override
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                
-                if(evt.getKeyCode() == KeyEvent.VK_ENTER){
-                    getByFolio();
-                } else {
-                    txtFolio.setText(
-                            UtilityCommon.onlyNumbers(txtFolio.getText())
-                    );
-                }
-            }
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                if(evt.getKeyCode() == KeyEvent.VK_ENTER){
-                    getByFolio();
-                } else {
-                    txtFolio.setText(
-                            UtilityCommon.onlyNumbers(txtFolio.getText())
-                    );
-                }
-            }
-        });
-    }
+    }   
     
     public Boolean showDialog () {
         setVisible(true);
@@ -105,7 +81,7 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
 
     }
     
-    private void updateOrders () throws Exception{        
+    private void updateOrders () throws Exception{
         List<OrdenProveedor> ordersToUpdate = new ArrayList<>(initialOrders);
         for(OrdenProveedor order : ordersToUpdate){
             OrdenProveedor cloneOrder = order.copy();
@@ -142,55 +118,89 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
     }
     
     private void copyOrders () {
-                
         try {
-            lblInfo.setText("Procesando, por favor espere...");
-            btnCopy.setEnabled(false);
-            updateOrders();
-            createOrdersFolioToCopy();            
+            
+            CompletableFuture<Void> updateOrdersFuture = CompletableFuture.runAsync(() -> {
+                try {
+                    updateOrders();
+                } catch (final Exception exception) {
+                    JOptionPane.showMessageDialog(this, exception, 
+                    ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
+                    log.error(exception.getMessage(),exception);
+                    throw new RuntimeException();
+                }
+            });
+
+            CompletableFuture<Void> createOrdersFolioToCopyFuture = CompletableFuture.runAsync(() -> {
+                try {
+                    createOrdersFolioToCopy();
+                } catch (final Exception exception) {
+                    JOptionPane.showMessageDialog(this, exception, 
+                    ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
+                    log.error(exception.getMessage(),exception);
+                    throw new RuntimeException();
+                }
+            });
+
+            CompletableFuture.allOf(updateOrdersFuture, createOrdersFolioToCopyFuture).join();      
+
             ParameterOrderProvider parameter = new ParameterOrderProvider();
             parameter.setLimit(10000);
             parameter.setFolioRenta(Integer.parseInt(folioToCopy));
             List<OrdenProveedor> list = orderService.getOrdersByParameters(parameter);
             tableViewOrdersProviders.format();
             fillTable(list);
-            this.btnCopy.setEnabled(false);
-            lblInfo.setText("Se copiaron las ordenes con éxito.");
+            disableBtnCopy();
+            final String messageSuccessfully = "Se copiaron las ordenes con éxito";
+            lblInfo.setText(messageSuccessfully);
             successfulChangesDetected = true;
-        } catch (final Exception exception) {
+            JOptionPane.showMessageDialog(this, messageSuccessfully,
+                    ApplicationConstants.MESSAGE_SAVE_SUCCESSFUL, JOptionPane.INFORMATION_MESSAGE);
+         } catch (Exception exception) { 
             JOptionPane.showMessageDialog(this, exception, 
-                    ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
-            this.btnCopy.setEnabled(false);
+            ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
             log.error(exception.getMessage(),exception);
+            successfulChangesDetected = false;
         } finally {
-            Toolkit.getDefaultToolkit().beep();
-        }
+           Toolkit.getDefaultToolkit();
+        }  
         
     }
     
     private void getByFolio () {
         
+        disableBtnCopy();
+        final String folioToSearch = UtilityCommon.onlyNumbers(txtFolio.getText().trim());
+        
+        if (folioToSearch.isEmpty()) {
+            return;
+        }
+        
+        if (folioToSearch.length() > 9) {
+            JOptionPane.showMessageDialog(this, "Ingresa un folio valido.", 
+                    ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         for (OrdenProveedor order : initialOrders) {
             String folio = order.getRenta().getFolio()+"";
-            if (txtFolio.getText().trim().equals(folio)) {
+            if (folioToSearch.equals(folio)) {
                 JOptionPane.showMessageDialog(this, "Ops, el folio "+txtFolio.getText().trim()+" al que quieres copiar "
                         + " ya se encuentra en esta orden: "+order.getId()+", por favor ingresa un folio diferente o elimina esta orden "
                                 + order.getId()+" para continuar.", 
                         ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
-                this.btnCopy.setEnabled(false);
+                txtFolio.requestFocus();
+                txtFolio.selectAll();
                 return;
             }
         }
         
-        lblInfo.setText("Obteniendo folio, por favor espere...");
-        
         try {
             Renta renta = 
-                    rentaService.getByFolio(Integer.parseInt(txtFolio.getText().trim()));
+                    rentaService.getByFolio(Integer.parseInt(folioToSearch));
             
             if (renta == null) {
-                lblInfo.setText("No se encontro el folio.");
-                this.btnCopy.setEnabled(false);
+                lblInfo.setText("No se encontro el folio: "+folioToSearch);                
                 txtFolio.requestFocus();
                 txtFolio.selectAll();
                 return;
@@ -202,37 +212,52 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
             return;
         }
                 
-        try {            
+        try {
             ParameterOrderProvider parameter = new ParameterOrderProvider();
             parameter.setLimit(10000);
             parameter.setFolioRenta(Integer.parseInt(txtFolio.getText().trim()));
-            List<OrdenProveedor> list = orderService.getOrdersByParameters(parameter);
+            List<OrdenProveedor> ordersProvider = orderService.getOrdersByParameters(parameter);
             tableViewOrdersProviders.format();
             fillTable(initialOrders);
-            fillTable(list);
-            this.btnCopy.setEnabled(true);
-            this.folioToCopy = txtFolio.getText().trim();
-            lblInfo.setText("Se obtubieron las ordenes al proveedor con éxito para el folio: "+folioToCopy);
+            fillTable(ordersProvider);
+            enableBtnCopy();
+            this.folioToCopy = folioToSearch;
+            lblInfo.setText("Folio: ["+folioToSearch+"] encontrado con éxito, "
+                    + "total de ordenes: ["+ordersProvider.size()+"].");
             txtFolio.setEnabled(false);
+            btnSearchByFolio.setEnabled(false);
         } catch (NumberFormatException numberFormatException) {
-            JOptionPane.showMessageDialog(this, "Ingresa un numero valido", 
+            JOptionPane.showMessageDialog(this, "Ingresa un folio valido.", 
                     ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
-            this.btnCopy.setEnabled(false);
-            lblInfo.setText("Ops ocurrio un error.");
+            disableBtnCopy();
             log.error(numberFormatException.getMessage(),numberFormatException);
         } catch (NoDataFoundException noDataFoundException) {
-            this.btnCopy.setEnabled(true);
-            lblInfo.setText("No se obtuvieron ordenes al proveedor para el folio: "+txtFolio.getText().trim());
+            enableBtnCopy();
+            lblInfo.setText("Folio: ["+folioToSearch+"] encontrado con éxito, "
+                    + "total de ordenes: [0].");
             txtFolio.setEnabled(false);
-            this.folioToCopy = txtFolio.getText().trim();
+            this.folioToCopy = folioToSearch;
             log.error(noDataFoundException.getMessage(),noDataFoundException);
+            btnSearchByFolio.setEnabled(false);
         } catch (BusinessException exception) {
             JOptionPane.showMessageDialog(this, exception, 
                     ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE);
-            this.btnCopy.setEnabled(false);
+            disableBtnCopy();
             lblInfo.setText("Ops ocurrio un error.");
             log.error(exception.getMessage(),exception);
-        }
+        } finally {
+           Toolkit.getDefaultToolkit();
+        }  
+    }
+    
+    private void disableBtnCopy () {
+        this.btnCopy.setEnabled(false);
+        btnCopy.setToolTipText(TOOL_TIP_TEX_BNT_COPY);
+    }
+    
+    private void enableBtnCopy () {
+        this.btnCopy.setEnabled(true);
+        btnCopy.setToolTipText(TOOL_TIP_TEX_BNT_COPY_SUCCESS);
     }
     
     private void getInitialOrders () {
@@ -330,6 +355,14 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
         );
 
         txtFolio.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        txtFolio.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtFolioKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtFolioKeyReleased(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel1.setText("Copiar ordenes al folio:  ");
@@ -361,7 +394,7 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
             }
         });
 
-        lblInfo.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        lblInfo.setFont(new java.awt.Font("Arial", 3, 12)); // NOI18N
         lblInfo.setText("jLabel2");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -439,6 +472,7 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
         lblInfo.setText("");
         btnCopy.setEnabled(false);
         successfulChangesDetected = false;
+        btnSearchByFolio.setEnabled(true);
     }//GEN-LAST:event_btnCleanActionPerformed
 
     private void btnSearchByFolioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchByFolioActionPerformed
@@ -446,8 +480,24 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSearchByFolioActionPerformed
 
     private void btnCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCopyActionPerformed
-        copyOrders();
+        
+        new Thread(() -> {
+            lblInfo.setText("Procesando, por favor espere...");
+            btnCopy.setEnabled(false);
+        }).start();
+        UtilityCommon.setTimeout(() -> copyOrders(), 1000);
+        
     }//GEN-LAST:event_btnCopyActionPerformed
+
+    private void txtFolioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFolioKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            getByFolio();
+        }
+    }//GEN-LAST:event_txtFolioKeyPressed
+
+    private void txtFolioKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFolioKeyReleased
+
+    }//GEN-LAST:event_txtFolioKeyReleased
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
