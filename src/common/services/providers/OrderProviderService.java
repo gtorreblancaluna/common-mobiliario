@@ -97,18 +97,26 @@ public class OrderProviderService {
         
     }
     
-    public void updateDetailOrderProvider(Long detalleOrdenProveedorId, Float cantidad, Float precio, String comentario, Long detailOrderProviderType, String fgActivo)throws BusinessException{
+    public void updateDetailOrderProvider(
+            Long detalleOrdenProveedorId, 
+            Float cantidad, 
+            Float precio, 
+            String comentario, 
+            Long detailOrderProviderType, 
+            String fgActivo)throws BusinessException{
         
         DetalleOrdenProveedor detail = new DetalleOrdenProveedor();
-        DetailOrderProviderType type = new DetailOrderProviderType();
         
-        type.setId(detailOrderProviderType);
+        if (detailOrderProviderType != null) {
+            DetailOrderProviderType type = 
+                    new DetailOrderProviderType(detailOrderProviderType);
+            detail.setDetailOrderProviderType(type);
+        }
         
         detail.setId(detalleOrdenProveedorId);
         detail.setCantidad(cantidad);
         detail.setPrecio(precio);
         detail.setComentario(comentario);
-        detail.setDetailOrderProviderType(type);
         detail.setActualizado(new Timestamp(System.currentTimeMillis()));
         detail.setStatus("1");
         detail.setFgActivo(fgActivo);

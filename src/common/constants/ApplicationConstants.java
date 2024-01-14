@@ -121,6 +121,7 @@ public interface ApplicationConstants {
     public static final String CMB_SELECCIONE = "-seleccione-";
     
     /* mensajes para mostrar en los ventanas de avisos */
+    public static final String MESSAGE_TITLE_CONFIRM_DELETE = "Eliminar";
     public static final String MESSAGE_SAVE_SUCCESSFUL = "Se ha registrado con \u00E9xito";
     public static final String MESSAGE_UPDATE_SUCCESSFUL = "Se actualiz\u00F3 con \u00E9xito";
     public static final String MESSAGE_DELETE_SUCCESSFUL = "Se elimin\u00F3 con \u00E9xito";
@@ -128,6 +129,7 @@ public interface ApplicationConstants {
     public static final String MESSAGE_NOT_PERMISIONS_ADMIN = "No cuentas con permisos de administrador";
     public static final String MESSAGE_MISSING_PARAMETERS = "Faltan parametros";
     public static final String MESSAGE_UNEXPECTED_ERROR = "Ocurri\u00F3 un error inesperado";
+    public static final String MESSAGE_UNEXPECTED_ERROR_CONTACT_SUPPORT = "Ocurri\u00F3 un error inesperado, reinicia el sistema y si persiste el problea contacta a un soporte.";
     public static final String MESSAGE_TITLE_ERROR = "Error";
     public static final String NO_DATA_FOUND_EXCEPTION = "No se obtuvieron registros";
     

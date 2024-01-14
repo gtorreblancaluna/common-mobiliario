@@ -3,11 +3,15 @@ package common.utilities;
 import common.constants.ApplicationConstants;
 import static common.constants.ApplicationConstants.LIMIT_GENERATE_PDF;
 import common.exceptions.BusinessException;
+import common.model.Articulo;
 import common.model.DatosGenerales;
 import common.model.Renta;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.Timestamp;
@@ -34,9 +38,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -47,6 +55,22 @@ import net.sf.jasperreports.engine.util.JRLoader;
 public abstract class UtilityCommon {
     
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    
+    
+    public static void addEscapeListener(final JDialog dialog) {
+        ActionListener escListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.setVisible(false);
+            }
+        };
+
+        dialog.getRootPane().registerKeyboardAction(escListener,
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+}
     
     public static void pushNotification(final String notification,
             List<String> listNotifications, javax.swing.JTextArea txtAreaNotifications){
@@ -60,6 +84,29 @@ public abstract class UtilityCommon {
         });      
         txtAreaNotifications.setText(null);
         txtAreaNotifications.setText(messages+"");
+    }
+    
+    public static List<Articulo> applyFilterToItems (List<Articulo> items, String text) {
+        
+        String textToSearch = removeAccents(text).toLowerCase().trim();
+        
+        return items.stream()
+                    .filter(articulo -> Objects.nonNull(articulo))
+                    .filter(articulo -> Objects.nonNull(articulo.getDescripcion()))
+                    .filter(articulo -> Objects.nonNull(articulo.getColor()))
+                    .filter(articulo -> (
+                            removeAccents(
+                                    articulo.getDescripcion().trim().toLowerCase() + " " + 
+                                            articulo.getColor().getColor().trim().toLowerCase()
+                            )).contains(textToSearch)
+                            || removeAccents(articulo.getCodigo().trim().toLowerCase())
+                                    .contains(textToSearch)
+                            || removeAccents(articulo.getColor().getColor().trim().toLowerCase())
+                                    .contains(textToSearch)
+                            || removeAccents(articulo.getCategoria().getDescripcion().trim().toLowerCase())
+                                    .contains(textToSearch)
+                    )
+                    .collect(Collectors.toList()); 
     }
     
     public static String onlyNumbers (String text) {
@@ -428,8 +475,7 @@ public abstract class UtilityCommon {
         else
             return true;
     
-    }
-    
+    }    
    
     public static void selectAllCheckboxInTable (JTable table, int column, boolean checked) {
        for (int i = 0 ; i < table.getRowCount() ; i++) {

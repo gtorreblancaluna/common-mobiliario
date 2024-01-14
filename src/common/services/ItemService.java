@@ -25,7 +25,7 @@ public class ItemService {
     }   
   
     private final ItemDAO itemDao = ItemDAO.getInstance();
-    
+       
     public List<ItemByFolioResultQuery> getItemsByFolio(SearchItemByFolioParams searchItemByFolioParams) throws DataOriginException{
         
         List<ItemByFolioResultQuery> itemByFolioResultQuerys
@@ -65,8 +65,10 @@ public class ItemService {
     public List<Articulo> obtenerArticulosActivos() {
         List<Articulo> articulos = itemDao.obtenerArticulosActivos();
         for(Articulo articulo : articulos){    
-                articulo.setUtiles(utilesCalculate(articulo));
-            } // end for articulos
+            articulo.setUtiles(utilesCalculate(articulo));
+        }
+        
+        replaceNullOrEmptyByZero(articulos);
         return articulos;
     }
                          
@@ -83,6 +85,21 @@ public class ItemService {
                     (articulo.getTotalCompras() != null ? articulo.getTotalCompras() : 0F  );
     }
     
+    private void replaceNullOrEmptyByZero (List<Articulo> articulos) {
+        if(!articulos.isEmpty()){
+            for(Articulo articulo : articulos){
+                articulo.setUtiles(utilesCalculate(articulo));
+                articulo.setTotalCompras( (articulo.getTotalCompras() != null ? articulo.getTotalCompras() : 0F));
+                articulo.setDevolucion((articulo.getDevolucion() != null ? articulo.getDevolucion() : 0F));
+                articulo.setCantidad((articulo.getCantidad() != null ? articulo.getCantidad() : 0F));
+                articulo.setFaltantes((articulo.getFaltantes() != null ? articulo.getFaltantes() : 0F));
+                articulo.setReparacion((articulo.getReparacion() != null ? articulo.getReparacion() : 0F));
+                articulo.setRentados((articulo.getRentados() != null ? articulo.getRentados() : 0F));
+                articulo.setAccidenteTrabajo((articulo.getAccidenteTrabajo() != null ? articulo.getAccidenteTrabajo() : 0F));
+            } // end for articulos
+        }
+    }
+    
     public List<Articulo> obtenerArticulosBusquedaInventario(Map<String,Object> map) throws DataOriginException {
         
         
@@ -97,18 +114,7 @@ public class ItemService {
         
         List<Articulo> articulos = itemDao.obtenerArticulosBusquedaInventario(map);
         
-        if(!articulos.isEmpty()){
-            for(Articulo articulo : articulos){
-                articulo.setUtiles(utilesCalculate(articulo));
-                articulo.setTotalCompras( (articulo.getTotalCompras() != null ? articulo.getTotalCompras() : 0F));
-                articulo.setDevolucion((articulo.getDevolucion() != null ? articulo.getDevolucion() : 0F));
-                articulo.setCantidad((articulo.getCantidad() != null ? articulo.getCantidad() : 0F));
-                articulo.setFaltantes((articulo.getFaltantes() != null ? articulo.getFaltantes() : 0F));
-                articulo.setReparacion((articulo.getReparacion() != null ? articulo.getReparacion() : 0F));
-                articulo.setRentados((articulo.getRentados() != null ? articulo.getRentados() : 0F));
-                articulo.setAccidenteTrabajo((articulo.getAccidenteTrabajo() != null ? articulo.getAccidenteTrabajo() : 0F));
-            } // end for articulos
-        }
+        replaceNullOrEmptyByZero(articulos);
          
         return articulos;
     }

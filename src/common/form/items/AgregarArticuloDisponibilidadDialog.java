@@ -1,53 +1,83 @@
 package common.form.items;
 
-import common.constants.ApplicationConstants;
-import java.awt.Toolkit;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import common.model.Articulo;
+import common.tables.TableItems;
 import common.utilities.UtilityCommon;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
-
+public class AgregarArticuloDisponibilidadDialog extends javax.swing.JDialog {
     
     private List<Articulo> items = new ArrayList<>();
     private static final DecimalFormat decimalFormat = new DecimalFormat( "#,###,###,##0.00" );
     private String itemId;
-    
+    private final TableItems tableItems;    
    
     public AgregarArticuloDisponibilidadDialog(java.awt.Frame parent, boolean modal, List<Articulo> articulos) {
         super(parent, modal);
-        initComponents();       
+        initComponents();        
+        tableItems = new TableItems();        
         txtSearch.requestFocus();        
         this.setLocationRelativeTo(null);
-        this.setTitle("Buscar articulo ");
-        formato_tabla();     
+        this.setTitle("Buscar articulo ");    
         this.items = articulos;
-        fillTable(articulos);      
+        fillTable(articulos);
+        UtilityCommon.addJtableToPane(400, 600, this.tablePane, tableItems);
+        UtilityCommon.addEscapeListener(this);
         
+        tableItems.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent evt) {
+                if(evt.getKeyCode() == KeyEvent.VK_ENTER && tableItems.getRowCount() > 0) {
+                    returnItemSelected(tableItems.getSelectedRow());
+                } else if (evt.getKeyCode() == KeyEvent.VK_UP 
+                        && tableItems.getSelectedRow() == 0) {
+                    txtSearch.requestFocus();
+                    txtSearch.selectAll();
+                }
+            }
+        });
+        
+        tableItems.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {                
+                if (evt.getClickCount() == 2) {
+                    returnItemSelected(tableItems.getSelectedRow());
+                }
+            }
+        });
 
     }
     
+    private void returnItemSelected (int selectedRow) {                    
+        this.itemId = tableItems.getValueAt(selectedRow, 
+                TableItems.Column.ID.getNumber()).toString();
+        setVisible(false);
+        this.dispose();
+    }
+    
     private void fillTable(List<Articulo> items) {
-        DefaultTableModel tableModel = (DefaultTableModel) itemsTable.getModel();
+        
+        tableItems.format();
+        
+        DefaultTableModel tableModel = (DefaultTableModel) tableItems.getModel();
         
         items.forEach(articulo -> {
-            Object row[] = {                                          
+            Object row[] = {  
+                false,
                 articulo.getArticuloId(),
                 articulo.getCodigo(),
                 articulo.getCategoria().getDescripcion(),
                 articulo.getDescripcion(),
                 articulo.getColor().getColor(),
                 decimalFormat.format(articulo.getPrecioRenta()),
-                decimalFormat.format(articulo.getStock())
+                decimalFormat.format(articulo.getStock()),
+                articulo.getFechaIngreso(),
+                articulo.getFechaUltimaModificacion()
               };
               tableModel.addRow(row);
         });
@@ -58,63 +88,12 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
         return itemId;
     }
     
-    private void formato_tabla() {
+
+
+     public void tabla_articulos_like() {         
         
-        Object[][] data = {{ApplicationConstants.EMPTY_STRING, 
-            ApplicationConstants.EMPTY_STRING, 
-            ApplicationConstants.EMPTY_STRING, 
-            ApplicationConstants.EMPTY_STRING, 
-            ApplicationConstants.EMPTY_STRING,
-            ApplicationConstants.EMPTY_STRING}};
-        String[] columnNames = {"id","Código", "Categoría", "Descripción", "Color", "P.Unitario", "Stock"};       
-        DefaultTableModel TableModel = new DefaultTableModel(data, columnNames);
-        itemsTable.setModel(TableModel);
-
-        int[] anchos = {10,60, 120, 250, 100, 90, 90};
-
-        for (int inn = 0; inn < itemsTable.getColumnCount(); inn++) {
-            itemsTable.getColumnModel().getColumn(inn).setPreferredWidth(anchos[inn]);
-        }
-
-        DefaultTableCellRenderer right = new DefaultTableCellRenderer();
-        right.setHorizontalAlignment(SwingConstants.RIGHT);
-
-        DefaultTableCellRenderer centrar = new DefaultTableCellRenderer();
-        centrar.setHorizontalAlignment(SwingConstants.CENTER);
-
-        try {
-            DefaultTableModel temp = (DefaultTableModel) itemsTable.getModel();
-            temp.removeRow(temp.getRowCount() - 1);
-        } catch (ArrayIndexOutOfBoundsException e) {
-        }
-        
-        itemsTable.getColumnModel().getColumn(0).setMaxWidth(0);
-        itemsTable.getColumnModel().getColumn(0).setMinWidth(0);
-        itemsTable.getColumnModel().getColumn(0).setPreferredWidth(0);      
-        itemsTable.getColumnModel().getColumn(2).setCellRenderer(centrar);
-        itemsTable.getColumnModel().getColumn(3).setCellRenderer(centrar);
-        itemsTable.getColumnModel().getColumn(4).setCellRenderer(right);
-        itemsTable.getColumnModel().getColumn(5).setCellRenderer(right);
-
-    }
-
-     public void tabla_articulos_like() {
-         
-        formato_tabla();
-        String textToSearch = UtilityCommon.removeAccents(txtSearch.getText().toLowerCase().trim());
-        List<Articulo> itemsFiltered = items.stream()
-                .filter(articulo -> Objects.nonNull(articulo))
-                .filter(articulo -> Objects.nonNull(articulo.getCodigo()))
-                .filter(articulo -> Objects.nonNull(articulo.getDescripcion()))
-                .filter(articulo -> Objects.nonNull(articulo.getColor()))
-                .filter(articulo -> (
-                            UtilityCommon.removeAccents(
-                                    articulo.getDescripcion().trim().toLowerCase() + " " + 
-                                            articulo.getColor().getColor().trim().toLowerCase()
-                            )).contains(textToSearch)
-                            || UtilityCommon.removeAccents(articulo.getCodigo().trim().toLowerCase())
-                                    .contains(textToSearch))
-                .collect(Collectors.toList());
+        List<Articulo> itemsFiltered = 
+                UtilityCommon.applyFilterToItems(items,txtSearch.getText());
         
         fillTable(itemsFiltered);
 
@@ -132,8 +111,7 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
         jPanel1 = new javax.swing.JPanel();
         lblEncontrados1 = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        itemsTable = new javax.swing.JTable(){public boolean isCellEditable(int rowIndex,int colIndex){return false;}};
+        tablePane = new javax.swing.JPanel();
 
         setTitle("Colores");
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -145,7 +123,12 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
         lblEncontrados1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblEncontrados1.setText("Buscar artículos por código, descripción o color.");
 
-        txtSearch.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 12)); // NOI18N
+        txtSearch.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        txtSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtSearchMouseClicked(evt);
+            }
+        });
         txtSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtSearchActionPerformed(evt);
@@ -157,24 +140,16 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
             }
         });
 
-        itemsTable.setFont(new java.awt.Font("Microsoft Sans Serif", 0, 12)); // NOI18N
-        itemsTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        itemsTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                itemsTableMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(itemsTable);
+        javax.swing.GroupLayout tablePaneLayout = new javax.swing.GroupLayout(tablePane);
+        tablePane.setLayout(tablePaneLayout);
+        tablePaneLayout.setHorizontalGroup(
+            tablePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        tablePaneLayout.setVerticalGroup(
+            tablePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 419, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -183,10 +158,13 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEncontrados1, javax.swing.GroupLayout.PREFERRED_SIZE, 680, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 680, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 680, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(tablePane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblEncontrados1, javax.swing.GroupLayout.PREFERRED_SIZE, 680, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 221, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,8 +174,8 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(tablePane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -213,8 +191,8 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         add(jPanel2, java.awt.BorderLayout.CENTER);
@@ -231,10 +209,13 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
     }//GEN-LAST:event_closeDialog
 
     private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
-        if(evt.getKeyCode() == KeyEvent.VK_ENTER && itemsTable.getRowCount() > 0) {
-            this.itemId = itemsTable.getValueAt(0, 0).toString();
-            setVisible(false);
-            this.dispose();
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER && tableItems.getRowCount() > 0) {
+            
+            returnItemSelected(0);
+
+        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN && tableItems.getRowCount() > 0) {
+            tableItems.requestFocus();
+            tableItems.changeSelection(0,0,false, false);
         } else {
            tabla_articulos_like();
         }
@@ -244,20 +225,9 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSearchActionPerformed
 
-    private void itemsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_itemsTableMouseClicked
-         if (evt.getClickCount() == 2) {
-            String idArticulo = itemsTable.getValueAt(itemsTable.getSelectedRow(), 0).toString();
-            if (idArticulo == null || idArticulo.equals("")) {
-                JOptionPane.showMessageDialog(null, "Ocurrio un error inesperado, porfavor intentalo de nuevo, si el problema sigue, reinicia el sistema :P ", "Error", JOptionPane.INFORMATION_MESSAGE);
-                Toolkit.getDefaultToolkit().beep();
-             }else{
-               this.itemId = idArticulo;
-               setVisible(false);              
-               this.dispose();
-                 
-            }
-         }
-    }//GEN-LAST:event_itemsTableMouseClicked
+    private void txtSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtSearchMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchMouseClicked
 
 
     public static void main(String args[]) {
@@ -276,11 +246,10 @@ public class AgregarArticuloDisponibilidadDialog extends java.awt.Dialog {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable itemsTable;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblEncontrados1;
+    private javax.swing.JPanel tablePane;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

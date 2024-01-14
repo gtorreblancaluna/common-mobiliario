@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="MapperDesgloseAlmacecn">
+     
+    <resultMap id="resultMapItemsDesgloseAlmacen" type="common.model.DesgloseAlmacenModel">        
+        
+        <result property="id" column="id"/>
+        
+        <result property="itemInit.articuloId" column="item_init_articulo_id"/>
+        <result property="itemInit.descripcion" column="item_init_articulo_descripcion"/>
+        <result property="itemInit.color.color" column="item_init_articulo_color"/>
+        
+        <result property="itemRelation.articuloId" column="item_relation_articulo_id"/>
+        <result property="itemRelation.descripcion" column="item_relation_articulo_descripcion"/>
+        <result property="itemRelation.color.color" column="item_relation_articulo_color"/>
+
+        <result property="comment" column="comment"/>
+        <result property="amount" column="amount"/> 
+        <result property="fgActive" column="fg_active"/>
+        <result property="createdAt" column="created_at"/>  
+        <result property="updatedAt" column="updated_at"/>  
+
+    </resultMap>
+    
+    <update id="deleteDesgloseAlmacenByIds" parameterType="java.util.List">
+        UPDATE desglose_almacen desglose
+        SET desglose.fg_active='0'
+        <foreach item="item" index="index" collection="list"
+            open="WHERE desglose.id IN (" separator="," close=")" >
+                #{item}
+        </foreach>
+    </update>
+    
+    <select id="getDesgloseAlmacenById" resultMap="resultMapItemsDesgloseAlmacen" 
+            parameterType="java.lang.String">
+        SELECT desglose.id,
+            articulo_relation.id_articulo AS item_relation_articulo_id,
+            articulo_relation.descripcion AS item_relation_articulo_descripcion,
+            color_articulo_relation.color AS item_relation_articulo_color,
+            desglose.comment,
+            desglose.amount,
+            desglose.fg_active,
+            desglose.created_at,
+            desglose.updated_at
+        FROM desglose_almacen desglose
+        INNER JOIN articulo articulo_init 
+            ON (articulo_init.id_articulo = desglose.item_init_id)
+        INNER JOIN articulo articulo_relation 
+            ON (articulo_relation.id_articulo = desglose.item_relation_id)
+        INNER JOIN color color_articulo_relation 
+            ON (color_articulo_relation.id_color = articulo_relation.id_color )
+        WHERE desglose.fg_active = '1' 
+        AND desglose.id = #{id}
+        ORDER BY articulo_relation.descripcion
+    </select>
+    
+    <insert id="insertDesgloseAlmacen" parameterType="common.model.DesgloseAlmacenModel">
+        INSERT INTO desglose_almacen 
+        (
+            item_init_id,
+            item_relation_id,
+            comment,
+            amount,
+            fg_active,
+            created_at,
+            updated_at
+        )
+        VALUES 
+        (
+            #{itemInit.articuloId},
+            #{itemRelation.articuloId},
+            #{comment},
+            #{amount},
+            #{fgActive},
+            #{createdAt},
+            #{updatedAt}
+        )
+
+    </insert>
+    
+    <update id="updateDesgloseAlmacen" parameterType="common.model.DesgloseAlmacenModel">
+        UPDATE desglose_almacen desglose       
+        <set>
+            <if test="itemInit != null">desglose.item_init_id=#{itemInit.articuloId},</if>
+            <if test="itemRelation != null">desglose.item_relation_id=#{itemRelation.articuloId},</if>
+            <if test="comment != null">desglose.comment=#{comment},</if>
+            <if test="amount != null">desglose.amount=#{amount},</if>
+            <if test="fgActive != null">desglose.fg_active=#{fgActive},</if>
+            <if test="updatedAt != null">desglose.updated_at=#{updatedAt}</if>
+        </set>
+        WHERE desglose.id = #{id}
+
+    </update>
+    
+    <select id="getItemsDesgloseAlmacenByInitItem" resultMap="resultMapItemsDesgloseAlmacen" 
+            parameterType="java.lang.String">
+        SELECT desglose.id,
+            articulo_relation.id_articulo AS item_relation_articulo_id,
+            articulo_relation.descripcion AS item_relation_articulo_descripcion,
+            color_articulo_relation.color AS item_relation_articulo_color,
+            desglose.comment,
+            desglose.amount,
+            desglose.fg_active,
+            desglose.created_at,
+            desglose.updated_at
+        FROM desglose_almacen desglose
+        INNER JOIN articulo articulo_init 
+            ON (articulo_init.id_articulo = desglose.item_init_id)
+        INNER JOIN articulo articulo_relation 
+            ON (articulo_relation.id_articulo = desglose.item_relation_id)
+        INNER JOIN color color_articulo_relation 
+            ON (color_articulo_relation.id_color = articulo_relation.id_color )
+        WHERE desglose.fg_active = '1' 
+        AND desglose.item_init_id = #{id}
+    </select>
+
+    <insert id="desgloseAlmacenModelInsert" parameterType="common.model.DesgloseAlmacenModel">
+        INSERT INTO desglose_almacen
+        (
+            item_init_id,
+            item_relation_id,
+            comment,
+            amount,
+            fg_active,
+            created_at,
+            updated_at
+        ) 
+        VALUES
+        (
+            #{itemInit.articuloId},
+            #{itemRelation.articuloId},
+            #{comment},
+            #{amount},
+            #{fgActive},
+            #{createdAt},
+            #{updatedAt}
+        )
+    </insert>
+</mapper>
