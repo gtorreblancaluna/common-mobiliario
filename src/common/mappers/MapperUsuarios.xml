@@ -71,5 +71,27 @@
         )
         AND u.activo = 1
         ORDER BY u.nombre
-    </select>  
+    </select>
+    <select id="getUsersCategoriesAlmacenAndEventInDesgloseAlmacen" resultMap="resultUsuario" parameterType="java.lang.Integer">
+        SELECT u.*, p.id_puesto, p.descripcion
+        FROM usuarios u
+        INNER JOIN puesto p ON (p.id_puesto = u.id_puesto)
+        WHERE u.id_usuarios IN (
+                SELECT asigna_categoria.id_usuarios 
+                FROM asigna_categoria asigna_categoria 
+                WHERE asigna_categoria.id_categoria IN (
+                    SELECT articulo.id_categoria
+                    FROM desglose_almacen desglose_almacen
+                    INNER JOIN articulo articulo ON (desglose_almacen.item_relation_id = articulo.id_articulo)
+                    WHERE desglose_almacen.item_init_id IN (
+                        SELECT articulo.id_articulo
+                        FROM detalle_renta detalle_renta
+                        INNER JOIN articulo articulo ON (detalle_renta.id_articulo = articulo.id_articulo)
+                        WHERE detalle_renta.id_renta = #{eventId}
+                    )
+                )
+        )
+        AND u.activo = 1
+        ORDER BY u.nombre
+    </select>
 </mapper>

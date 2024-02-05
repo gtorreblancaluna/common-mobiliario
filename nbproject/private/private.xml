@@ -3,13 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/107209781/Developer/mobiliario-project/common-mobiliario/src/common/tables/TableCatalogSocialMediaContact.java</file>
-            <file>file:/C:/Users/107209781/Developer/mobiliario-project/common-mobiliario/src/common/tables/TableCustomer.java</file>
-            <file>file:/C:/Users/107209781/Developer/mobiliario-project/common-mobiliario/src/common/tables/TableItems.java</file>
-            <file>file:/C:/Users/107209781/Developer/mobiliario-project/common-mobiliario/src/common/mappers/MapperDesgloseAlmacen.xml</file>
-            <file>file:/C:/Users/107209781/Developer/mobiliario-project/common-mobiliario/src/common/tables/TableDisponibilidadArticulosShow.java</file>
-            <file>file:/C:/Users/107209781/Developer/mobiliario-project/common-mobiliario/src/common/tables/TableItemsByFolio.java</file>
-            <file>file:/C:/Users/107209781/Developer/mobiliario-project/common-mobiliario/src/common/mappers/MapperArticulos.xml</file>
+            <file>file:/C:/Users/107209781/Developer/mobiliario-project/common-mobiliario/src/common/utilities/JasperPrintUtility.java</file>
         </group>
     </open-files>
 </project-private>

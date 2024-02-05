@@ -7,29 +7,7 @@ import common.services.PropertiesService;
 
 public class ConnectionDB {
     
-    private static final ConnectionDB SINGLE_INSTANCE = null;
-    
-    private ConnectionDB() throws Exception {
-        
-        prop = PropertiesService.getInstance();
-        this.bd = prop.getProperty("db.database.name");
-        this.user = prop.getProperty("db.username");
-        this.password = prop.getProperty("db.password");
-        this.url = prop.getProperty("db.url");
-        this.driver = prop.getProperty("db.driver");
-        connect();
-
-    }
-    
-    public static ConnectionDB getInstance() throws Exception{
-        
-        if (SINGLE_INSTANCE == null) {
-            return new ConnectionDB();
-        }
-        return SINGLE_INSTANCE;
-    } 
-    
-    
+    private static ConnectionDB SINGLE_INSTANCE = null;
     private final PropertiesService prop;
     private final String bd;
     private final String user; 
@@ -37,13 +15,35 @@ public class ConnectionDB {
     private final String url;
     private final String driver;
     private java.sql.Connection connection;
-
+    
+    private ConnectionDB() throws Exception {        
+        prop = PropertiesService.getInstance();
+        this.bd = prop.getProperty("db.database.name");
+        this.user = prop.getProperty("db.username");
+        this.password = prop.getProperty("db.password");
+        this.url = prop.getProperty("db.url");
+        this.driver = prop.getProperty("db.driver");
+        connect();
+    }
+    
+    private synchronized static void createInstance() throws Exception {
+        if (SINGLE_INSTANCE == null) { 
+            SINGLE_INSTANCE = new ConnectionDB();
+        }
+    }
+    
+    public static ConnectionDB getInstance() throws Exception{
+        
+        if (SINGLE_INSTANCE == null) {
+            createInstance();
+        }
+        return SINGLE_INSTANCE;
+    }
     
     private void connect() throws Exception{  
         
         try {
             //obtenemos el driver de para mysql
-            
             Class.forName(driver);
             //obtenemos la conexión
             connection = DriverManager.getConnection(url, user, password);
@@ -57,11 +57,10 @@ public class ConnectionDB {
         } catch (SQLException e) {
             System.out.println(e);
             throw new SQLException(e);
-
         } catch (ClassNotFoundException e) {
             System.out.println(e);
             throw new ClassNotFoundException(e.toString());
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception(e.toString());
         }
     }

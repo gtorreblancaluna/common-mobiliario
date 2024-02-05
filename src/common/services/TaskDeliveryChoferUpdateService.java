@@ -1,6 +1,8 @@
 package common.services;
 
 import common.constants.ApplicationConstants;
+import common.constants.PropertyConstant;
+import common.utilities.PropertySystemUtil;
 import common.dao.TaskDeliveryChoferUpdateDAO;
 import common.exceptions.DataOriginException;
 import common.exceptions.NoDataFoundException;
@@ -13,6 +15,7 @@ import common.model.Tipo;
 import common.model.Usuario;
 import java.util.Date;
 import common.model.TaskCatalogVO;
+import java.io.IOException;
 import org.apache.log4j.Logger;
 
 public class TaskDeliveryChoferUpdateService {
@@ -39,13 +42,10 @@ public class TaskDeliveryChoferUpdateService {
             final Boolean updateItems,
             final String choferId,
             final Boolean generalDataUpdated,
-            final String userId,
-            final Boolean generateTaskChofer
+            final String userId
     )  throws NoDataFoundException, DataOriginException {
         
-        if (!generateTaskChofer) {
-            throw new NoDataFoundException(ApplicationConstants.MESSAGE_GENERATE_TASK_CHOFER_NO_ACTIVE);
-        }
+        validateIfIsActiveGenerateTask();
         
         TaskCatalogVO taskCatalogVO = taskUtilityValidateUpdateService.validateAndBuild(
                 eventStatusChange,
@@ -108,13 +108,12 @@ public class TaskDeliveryChoferUpdateService {
              final Long rentaId,
              final String eventFolio,
              final String choferId,
-             final String userId,
-             final Boolean generateTaskChofer
+             final String userId
              ) throws NoDataFoundException, DataOriginException{
          
-        if (!generateTaskChofer) {
-            throw new NoDataFoundException(ApplicationConstants.MESSAGE_GENERATE_TASK_CHOFER_NO_ACTIVE);
-        }
+        
+        validateIfIsActiveGenerateTask();
+        
         
         TaskCatalogVO taskCatalogVO = new TaskCatalogVO();
         taskCatalogVO.setRentaId(rentaId+"");
@@ -123,6 +122,17 @@ public class TaskDeliveryChoferUpdateService {
         taskCatalogVO.setChoferId(choferId);
         taskCatalogVO.setUserId(userId);
         return save(taskCatalogVO);
+    }
+     
+    private void validateIfIsActiveGenerateTask () throws DataOriginException{
+        try {
+            if (!Boolean.parseBoolean(PropertySystemUtil.get(PropertyConstant.GENERATE_TASK_CHOFER))) {
+                throw new DataOriginException(ApplicationConstants.MESSAGE_GENERATE_TASK_CHOFER_NO_ACTIVE);
+            }
+        } catch (IOException e) {
+            log.error(e);
+            throw new DataOriginException(e.getMessage(),e);
+        }
     }
     
 }

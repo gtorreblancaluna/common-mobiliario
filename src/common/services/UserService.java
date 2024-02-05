@@ -5,6 +5,9 @@ import common.exceptions.DataOriginException;
 import common.dao.UserDAO;
 import java.util.List;
 import common.model.Usuario;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.log4j.Logger;
 
 public class UserService {
@@ -49,7 +52,13 @@ public class UserService {
     }
     
     public List<Usuario> getUsersInCategoriesAlmacenAndEvent (Integer eventId) throws DataOriginException {
-        return usuariosDao.getUsersInCategoriesAlmacenAndEvent(eventId);
+        
+        Set<Usuario> usersReturn = new HashSet<>();        
+        usersReturn
+                .addAll(usuariosDao.getUsersCategoriesAlmacenAndEventInDesgloseAlmacen(eventId));        
+        usersReturn
+                .addAll(usuariosDao.getUsersInCategoriesAlmacenAndEvent(eventId));                       
+        return new ArrayList<>(usersReturn);
     }
     
     public List<Usuario> getUsersInCategoriesAlmacen () throws DataOriginException {

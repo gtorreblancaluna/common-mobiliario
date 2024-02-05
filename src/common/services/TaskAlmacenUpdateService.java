@@ -1,6 +1,7 @@
 package common.services;
 
 import common.constants.ApplicationConstants;
+import common.constants.PropertyConstant;
 import common.dao.TaskAlmacenUpdateDAO;
 import common.exceptions.DataOriginException;
 import common.exceptions.NoDataFoundException;
@@ -13,6 +14,8 @@ import common.model.TaskAlmacenVO;
 import common.model.TaskCatalogVO;
 import common.model.Tipo;
 import common.model.Usuario;
+import common.utilities.PropertySystemUtil;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -43,15 +46,10 @@ public class TaskAlmacenUpdateService {
             final Renta currentRenta,
             final Boolean updateItems,
             final Boolean generalDataUpdated,
-            final String userId,
-            final Boolean generateTaskAlmacen
+            final String userId
     )  throws NoDataFoundException, DataOriginException {
         
-        
-        if (!generateTaskAlmacen) {
-            throw new NoDataFoundException(ApplicationConstants.MESSAGE_GENERATE_TASK_ALMACEN_NO_ACTIVE);
-        }
-        
+        validateIfIsActiveGenerateTask();        
         TaskCatalogVO taskCatalogVO = taskUtilityValidateUpdateService.validateAndBuild(
                 eventStatusChange,
                 eventTypeChange,
@@ -131,19 +129,27 @@ public class TaskAlmacenUpdateService {
         return stringBuilder.toString();
     }
     
-    public String saveWhenIsNewEvent (Long rentaId, String folio, String userId, 
-            final Boolean generateTaskAlmacen
+    public String saveWhenIsNewEvent (Long rentaId, String folio, String userId
             ) throws NoDataFoundException, DataOriginException{
                
-        if (!generateTaskAlmacen) {
-            throw new NoDataFoundException(ApplicationConstants.MESSAGE_GENERATE_TASK_ALMACEN_NO_ACTIVE);
-        }
+        validateIfIsActiveGenerateTask();
         TaskCatalogVO taskCatalogVO = new TaskCatalogVO();
         taskCatalogVO.setRentaId(rentaId+"");
         taskCatalogVO.setStatusAlmacenTaskCatalog(StatusAlmacenTaskCatalog.NEW_FOLIO);
         taskCatalogVO.setEventFolio(folio);
         taskCatalogVO.setUserId(userId);
         return save(taskCatalogVO);
+    }
+    
+    private void validateIfIsActiveGenerateTask () throws DataOriginException{
+        try {
+            if (!Boolean.parseBoolean(PropertySystemUtil.get(PropertyConstant.GENERATE_TASK_ALMACEN))) {
+                throw new DataOriginException(ApplicationConstants.MESSAGE_GENERATE_TASK_ALMACEN_NO_ACTIVE);
+            }
+        } catch (IOException e) {
+            log.error(e);
+            throw new DataOriginException(e.getMessage(),e);
+        }
     }
     
 }

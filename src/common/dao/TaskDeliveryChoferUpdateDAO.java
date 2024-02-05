@@ -3,6 +3,7 @@ package common.dao;
 import common.exceptions.DataOriginException;
 import common.model.TaskChoferDeliveryVO;
 import common.utilities.MyBatisConnectionFactory;
+import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
@@ -32,7 +33,7 @@ public class TaskDeliveryChoferUpdateDAO {
         SqlSession session = null;
         try {
            session = sqlSessionFactory.openSession();
-           session.insert("MapperTaskDeliveryChoferUpdate.saveTaskDeliveryChofer",taskChoferDeliveryVO);     
+           session.insert("MapperTaskChoferDelivery.saveTaskDeliveryChofer",taskChoferDeliveryVO);     
            session.commit();
         }catch(Exception e){
             LOGGER.error(e);
@@ -41,6 +42,22 @@ public class TaskDeliveryChoferUpdateDAO {
             if (session != null){
                 session.close();
             }
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void updateTaskChoferDelivery(Map<String,Object> parameters) throws DataOriginException{
+        SqlSession session = null;
+        try {
+            session = sqlSessionFactory.openSession();
+            session.update("MapperTaskChoferDelivery.updateTaskChoferDelivery",parameters);
+            session.commit();
+        }catch(Exception e){
+            LOGGER.error(e);
+            throw new DataOriginException(e.getMessage(),e);
+        } finally {
+            if (session != null)
+                session.close();
         }
     }
     

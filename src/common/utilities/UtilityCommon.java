@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -57,6 +59,15 @@ public abstract class UtilityCommon {
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     
+    public static String getPathLocation()throws IOException,URISyntaxException{
+   
+        File file = new File(UtilityCommon.class.getProtectionDomain().getCodeSource().getLocation()
+                .toURI()).getParentFile();
+        
+        return file+"";
+    
+    }
+    
     public static void addEscapeListener(final JDialog dialog) {
         ActionListener escListener = new ActionListener() {
 
@@ -88,7 +99,7 @@ public abstract class UtilityCommon {
     
     public static List<Articulo> applyFilterToItems (List<Articulo> items, String text) {
         
-        String textToSearch = removeAccents(text).toLowerCase().trim();
+        String textToSearch = "(.*)"+removeAccents(text).toLowerCase().trim()+"(.*)";
         
         return items.stream()
                     .filter(articulo -> Objects.nonNull(articulo))
@@ -98,15 +109,16 @@ public abstract class UtilityCommon {
                             removeAccents(
                                     articulo.getDescripcion().trim().toLowerCase() + " " + 
                                             articulo.getColor().getColor().trim().toLowerCase()
-                            )).contains(textToSearch)
+                            )).matches(textToSearch)
                             || removeAccents(articulo.getCodigo().trim().toLowerCase())
-                                    .contains(textToSearch)
+                                    .matches(textToSearch)
                             || removeAccents(articulo.getColor().getColor().trim().toLowerCase())
-                                    .contains(textToSearch)
+                                    .matches(textToSearch)
                             || removeAccents(articulo.getCategoria().getDescripcion().trim().toLowerCase())
-                                    .contains(textToSearch)
+                                    .matches(textToSearch)
+                            
                     )
-                    .collect(Collectors.toList()); 
+                    .collect(Collectors.toList());
     }
     
     public static String onlyNumbers (String text) {

@@ -54,7 +54,6 @@
             ON (color_articulo_relation.id_color = articulo_relation.id_color )
         WHERE desglose.fg_active = '1' 
         AND desglose.id = #{id}
-        ORDER BY articulo_relation.descripcion
     </select>
     
     <insert id="insertDesgloseAlmacen" parameterType="common.model.DesgloseAlmacenModel">
@@ -115,6 +114,7 @@
             ON (color_articulo_relation.id_color = articulo_relation.id_color )
         WHERE desglose.fg_active = '1' 
         AND desglose.item_init_id = #{id}
+        ORDER BY articulo_relation.descripcion
     </select>
 
     <insert id="desgloseAlmacenModelInsert" parameterType="common.model.DesgloseAlmacenModel">
