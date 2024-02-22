@@ -1,7 +1,16 @@
 
 package common.constants;
 
-public interface ApplicationConstants {
+public class ApplicationConstants {
+    
+    private ApplicationConstants () {
+        throw new IllegalStateException(UTILITY_CLASS);
+    }
+    
+    public static final String TRUE = "true";
+    public static final String FALSE = "false";
+    public static final String UTILITY_CLASS = "Utility class";
+    public static final String URL_IMAGEN_PARAMETER_JASPER_KEY = "URL_IMAGEN";
     
     public static final String LANGUAJE = "es";
     public static final String COUNTRY = "MX";

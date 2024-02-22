@@ -31,11 +31,19 @@ public class RentaService {
 
     private RentaService() {}
 
-    private static final RentaService SINGLE_INSTANCE = null;
+    private static RentaService SINGLE_INSTANCE = null;
 
-    public static RentaService getInstance(){
-        if (SINGLE_INSTANCE == null) {
-            return new RentaService();
+    // creador sincronizado para protegerse de posibles problemas  multi-hilo
+    // otra prueba para evitar instanciación múltiple 
+    private static synchronized void createInstance() {
+        if (SINGLE_INSTANCE == null) { 
+            SINGLE_INSTANCE = new RentaService();
+        }
+    }
+    
+    public static RentaService getInstance() {
+        if (SINGLE_INSTANCE == null){ 
+            createInstance();
         }
         return SINGLE_INSTANCE;
     }

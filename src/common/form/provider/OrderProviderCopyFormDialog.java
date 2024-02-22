@@ -13,16 +13,12 @@ import common.services.providers.OrderProviderService;
 import common.tables.TableViewOrdersProviders;
 import common.utilities.UtilityCommon;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 
 public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
@@ -39,8 +35,8 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
     private String folioToCopy;
     private Integer rentaIdToCopy;
     private final RentaService rentaService;
-    private final String TOOL_TIP_TEX_BNT_COPY = "Ingresa el folio para copiar las ordenes.";
-    private final String TOOL_TIP_TEX_BNT_COPY_SUCCESS = "Copiar ordenes.";
+    private static final String TOOL_TIP_TEX_BNT_COPY = "Ingresa el folio para copiar las ordenes.";
+    private static final String TOOL_TIP_TEX_BNT_COPY_SUCCESS = "Copiar ordenes.";
 
     public OrderProviderCopyFormDialog(java.awt.Frame parent, boolean modal, 
             OrderProviderCopyParameter orderProviderCopyParameter) {
@@ -56,7 +52,7 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
         UtilityCommon.addJtableToPane(940, 940, panelTable, tableViewOrdersProviders);
         this.txtFolio.requestFocus();
         getInitialOrders();
-        addEscapeListener();
+        UtilityCommon.addEscapeListener(this);
         successfulChangesDetected = false;
         disableBtnCopy();
         lblInfo.setText("Ingresa el folio al que quieres copiar las ordenes.");
@@ -68,18 +64,6 @@ public class OrderProviderCopyFormDialog extends javax.swing.JDialog {
         return successfulChangesDetected;
     }
     
-    // close dialog when esc is pressed.
-    private void addEscapeListener() {
-        ActionListener escListener = (ActionEvent e) -> {
-            setVisible(false);
-            dispose();
-        };
-
-        this.getRootPane().registerKeyboardAction(escListener,
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    }
     
     private void updateOrders () throws Exception{
         List<OrdenProveedor> ordersToUpdate = new ArrayList<>(initialOrders);

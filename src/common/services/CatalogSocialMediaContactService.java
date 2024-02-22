@@ -16,15 +16,17 @@ public class CatalogSocialMediaContactService {
 
     // creador sincronizado para protegerse de posibles problemas  multi-hilo
     // otra prueba para evitar instanciación múltiple 
-    private synchronized static void createInstance() {
+    private static synchronized void createInstance() {
         if (INSTANCE == null) { 
             INSTANCE = new CatalogSocialMediaContactService();
         }
     }
 
     public static CatalogSocialMediaContactService getInstance() {
-        if (INSTANCE == null) createInstance();
-            return INSTANCE;
+        if (INSTANCE == null){ 
+            createInstance();
+        }
+        return INSTANCE;
     }
     
     public List<CatalogSocialMediaContactModel> getAll () throws DataOriginException {
