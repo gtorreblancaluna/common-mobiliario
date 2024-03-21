@@ -2,6 +2,7 @@ package common.utilities;
 
 import common.constants.ApplicationConstants;
 import static common.constants.ApplicationConstants.COUNTRY;
+import static common.constants.ApplicationConstants.DATE_FORMAT_EX_LARGE;
 import static common.constants.ApplicationConstants.DATE_FORMAT_LARGE;
 import static common.constants.ApplicationConstants.LANGUAJE;
 import static common.constants.ApplicationConstants.SIMPLE_DATE_FORMAT_SHORT;
@@ -12,6 +13,7 @@ import common.model.Renta;
 import common.model.Usuario;
 import java.awt.Desktop;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,9 +35,119 @@ public class JasperPrintUtility {
         throw new IllegalStateException(UTILITY_CLASS);
     }
     
-    private static final Logger log = Logger.getLogger(JasperPrintUtility.class.getName());    
+    private static final Logger log = Logger.getLogger(JasperPrintUtility.class.getName());
+        
+    public static void generatePDFConsultaRenta (final Renta renta, final DatosGenerales datosGenerales, final String pathLocation) {
+        JasperPrint jasperPrint;
+        try {
+            
+            
+            
+            String archivo = pathLocation+ApplicationConstants.RUTA_REPORTE_CONSULTA;
+            if (archivo.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "No se encuentra el Archivo jasper");
+                return;
+            }
+            
+            final SimpleDateFormat formatter = 
+                new SimpleDateFormat(SIMPLE_DATE_FORMAT_SHORT, new Locale ( LANGUAJE , COUNTRY ));
+            final SimpleDateFormat simpleDateFormat = 
+                new SimpleDateFormat(DATE_FORMAT_EX_LARGE, new Locale ( LANGUAJE , COUNTRY ));
+            
+            final DecimalFormat decimalFormat = new DecimalFormat( "$#,###,###,##0.00" );
+            
+            String telsCustomer = getCustomerTels(renta);
+            
+            JasperReport masterReport = (JasperReport) JRLoader.loadObjectFromFile(archivo);  
+           
+            Map<String,Object> parameter = new HashMap<>();
+            parameter.put("NOMBRE_EMPRESA",datosGenerales.getCompanyName());
+            parameter.put("DIRECCION_1",datosGenerales.getAddress1() != null ? datosGenerales.getAddress1() : "");
+            parameter.put("DIRECCION_2",datosGenerales.getAddress2() != null ? datosGenerales.getAddress2() : "");
+            parameter.put("DIRECCION_3",datosGenerales.getAddress3() != null ? datosGenerales.getAddress3() : "");
+            parameter.put("URL_IMAGEN",pathLocation+ApplicationConstants.LOGO_EMPRESA );
+            parameter.put("id_renta", renta.getRentaId()+"");
+            parameter.put("SUB_TOTAL", decimalFormat.format(renta.getSubTotal()));
+            
+            if (renta.getTotalAbonos() > 0F) {
+                parameter.put("DESCRIPCION_ABONOS", "Pagos:");
+                parameter.put("abonos", decimalFormat.format(renta.getTotalAbonos()));     
+            } else {
+                parameter.put("DESCRIPCION_ABONOS", ApplicationConstants.EMPTY_STRING);
+                parameter.put("abonos", ApplicationConstants.EMPTY_STRING);                
+            }
+            
+            if (renta.getCalculoDescuento() > 0F) {
+                parameter.put("DESCRIPCION_DESCUENTO", "Descuento:");
+                parameter.put("descuento", decimalFormat.format(renta.getCalculoDescuento()));
+            } else {
+                parameter.put("DESCRIPCION_DESCUENTO", ApplicationConstants.EMPTY_STRING);
+                parameter.put("descuento", ApplicationConstants.EMPTY_STRING);
+            }
+            
+            if (renta.getCalculoIVA() > 0F) {
+                parameter.put("DESCRIPCION_IVA", "IVA:");
+                parameter.put("iva", decimalFormat.format(renta.getCalculoIVA()));
+            } else {
+                parameter.put("DESCRIPCION_IVA", ApplicationConstants.EMPTY_STRING);
+                parameter.put("iva", ApplicationConstants.EMPTY_STRING);
+            }
+            
+            if (renta.getTotalFaltantes() > 0F) {
+                parameter.put("DESCRIPCION_TOTAL_FALTANTES", "Faltante por cubrir:");
+                parameter.put("total_faltantes", decimalFormat.format(renta.getTotalFaltantes()));
+            } else {
+                parameter.put("DESCRIPCION_TOTAL_FALTANTES", ApplicationConstants.EMPTY_STRING);
+                parameter.put("total_faltantes", ApplicationConstants.EMPTY_STRING);
+            }
+            
+            if (renta.getEnvioRecoleccion() > 0F) {
+                parameter.put("DESCRIPCION_ENVIO_RECOLECCION", "Envio y recolección:");
+                parameter.put("ENVIO_RECOLECCION", decimalFormat.format(renta.getEnvioRecoleccion()));
+            } else {
+                parameter.put("DESCRIPCION_ENVIO_RECOLECCION", ApplicationConstants.EMPTY_STRING);
+                parameter.put("ENVIO_RECOLECCION", ApplicationConstants.EMPTY_STRING);
+            }
+            
+            if (renta.getDepositoGarantia() > 0F) {
+                parameter.put("DESCRIPCION_DEPOSITO_GARANTIA","Deposito en garantía:");
+                parameter.put("DEPOSITO_GARANTIA",decimalFormat.format(renta.getDepositoGarantia()));
+            } else {
+                parameter.put("DESCRIPCION_DEPOSITO_GARANTIA",ApplicationConstants.EMPTY_STRING);
+                parameter.put("DEPOSITO_GARANTIA",ApplicationConstants.EMPTY_STRING);
+            }
+            
+            parameter.put("TOTAL", decimalFormat.format(renta.getTotal()));
+            
+            
+            
+            parameter.put("chofer", renta.getChofer().getNombre()+" "+renta.getChofer().getApellidos());
+            parameter.put("mensaje_faltantes", renta.getMensajeFaltantes());  
+            parameter.put("URL_SUB_REPORT_CONSULTA", pathLocation+ApplicationConstants.URL_SUB_REPORT_CONSULTA);
+            parameter.put("INFO_SUMMARY_FOLIO",datosGenerales.getInfoSummaryFolio());
+            parameter.put("TELEFONOS_CLIENTE",telsCustomer);                       
+            parameter.put("FECHA_REGISTRO",
+                        simpleDateFormat.format(formatter.parse(renta.getFechaPedido())));
+            parameter.put("FECHA_EVENTO",
+                        simpleDateFormat.format(formatter.parse(renta.getFechaEvento())));
+            parameter.put("FECHA_ENTREGA",
+                    simpleDateFormat.format(formatter.parse(renta.getFechaEntrega())) + ". Horario: " +  renta.getHoraEntrega());
+            parameter.put("FECHA_RECOLECCION",
+                        simpleDateFormat.format(formatter.parse(renta.getFechaDevolucion())) + ". Horario: " + renta.getHoraDevolucion());
+         
+            jasperPrint = JasperFillManager.fillReport(masterReport, parameter, ConnectionDB.getInstance().getConnection());
+            JasperExportManager.exportReportToPdfFile(jasperPrint, pathLocation+ApplicationConstants.NOMBRE_REPORTE_CONSULTA);
+            File file2 = new File(pathLocation+ApplicationConstants.NOMBRE_REPORTE_CONSULTA);
+                
+            Desktop.getDesktop().open(file2);
+            
+        } catch (Exception e) {
+            log.error(e);
+            JOptionPane.showMessageDialog(null, "Error cargando el reporte maestro: " + e.getMessage());
+        }
+    }
     
-    public static void generatePDFOrderProvider (String orderId, DatosGenerales datosGenerales, final String pathLocation) {
+    public static void generatePDFOrderProvider (final String orderId, final DatosGenerales datosGenerales, final String pathLocation) {
              
         JasperPrint jasperPrint;
         

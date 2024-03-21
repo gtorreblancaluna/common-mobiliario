@@ -7,7 +7,7 @@ import java.util.List;
 
 public class DesgloseAlmacenService {
         
-    private static DesgloseAlmacenService INSTANCE = null;
+    private static DesgloseAlmacenService instanceService = null;
     private final DesgloseAlmacenDAO desgloseAlmacenDao 
             = DesgloseAlmacenDAO.getInstance();
 
@@ -16,15 +16,17 @@ public class DesgloseAlmacenService {
 
     // creador sincronizado para protegerse de posibles problemas  multi-hilo
     // otra prueba para evitar instanciación múltiple 
-    private synchronized static void createInstance() {
-        if (INSTANCE == null) { 
-            INSTANCE = new DesgloseAlmacenService();
+    private static synchronized  void createInstance() {
+        if (instanceService == null) { 
+            instanceService = new DesgloseAlmacenService();
         }
     }
 
     public static DesgloseAlmacenService getInstance() {
-        if (INSTANCE == null) createInstance();
-            return INSTANCE;
+        if (instanceService == null){ 
+            createInstance();
+        }
+        return instanceService;
     }
     
     public DesgloseAlmacenModel getById (String id) throws DataOriginException {

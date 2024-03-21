@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
 
 public class DesgloseAlmacenDAO {
     
-    private static DesgloseAlmacenDAO INSTANCE = null;
+    private static DesgloseAlmacenDAO instanceDao = null;
     private final SqlSessionFactory sqlSessionFactory;
-    private static Logger log = Logger.getLogger(DesgloseAlmacenDAO.class.getName());
+    private static final Logger log = Logger.getLogger(DesgloseAlmacenDAO.class.getName());
     
     // Private constructor suppresses 
     private DesgloseAlmacenDAO(){
@@ -23,15 +23,17 @@ public class DesgloseAlmacenDAO {
 
     // creador sincronizado para protegerse de posibles problemas  multi-hilo
     // otra prueba para evitar instanciación múltiple 
-    private synchronized static void createInstance() {
-        if (INSTANCE == null) { 
-            INSTANCE = new DesgloseAlmacenDAO();
+    private static synchronized void createInstance() {
+        if (instanceDao == null) { 
+            instanceDao = new DesgloseAlmacenDAO();
         }
     }
 
     public static DesgloseAlmacenDAO getInstance() {
-        if (INSTANCE == null) createInstance();
-            return INSTANCE;
+        if (instanceDao == null){ 
+            createInstance();
+        }
+        return instanceDao;
     }
     
     @SuppressWarnings("unchecked")

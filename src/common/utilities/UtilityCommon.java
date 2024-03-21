@@ -140,6 +140,9 @@ public class UtilityCommon {
                     .collect(Collectors.toList());
     }
     
+    public static String onlyNumbersAndPoint (String text) {
+        return text.replaceAll("[^0-9.]", "");
+    }
     public static String onlyNumbers (String text) {
         return text.replaceAll("[^0-9]", "");
     }
@@ -254,15 +257,13 @@ public class UtilityCommon {
     
     public static void calcularTotalesPorRenta (Renta renta) {
     
-        Float totalCalculo = 0F;
-
         if (renta.getDescuento() != null && renta.getDescuento() > 0) {
             renta.setCalculoDescuento((renta.getSubTotal() * (renta.getDescuento() / 100)));
         } else {
             renta.setCalculoDescuento(0F);
         }
 
-        if(renta.getTotalFaltantes() > 0 && renta.getDepositoGarantia()>0){
+        if(renta.getTotalFaltantes() > 0F && renta.getDepositoGarantia() > 0F){
                 // el pedido tiene pago pendiente por faltante 
                // a dejado deposito en garantia
                renta.setTotalFaltantesPorCubrir(renta.getTotalFaltantes() - renta.getDepositoGarantia());
@@ -272,26 +273,32 @@ public class UtilityCommon {
         if (renta.getTotalAbonos() == null) {
             renta.setTotalAbonos(0F);
         }
+        if (renta.getEnvioRecoleccion() == null) {
+            renta.setEnvioRecoleccion(0F);
+        }
+        if (renta.getDepositoGarantia() == null) {
+            renta.setDepositoGarantia(0F);
+        }
+        
+        Float totalCalculoSinIVA = (renta.getSubTotal() + renta.getEnvioRecoleccion() + renta.getDepositoGarantia()) 
+                - renta.getCalculoDescuento();
 
-        totalCalculo = (renta.getSubTotal() +
-                        (renta.getEnvioRecoleccion() != null ? renta.getEnvioRecoleccion() : 0F) +
-                        (renta.getDepositoGarantia() != null ? renta.getDepositoGarantia() : 0F)) - renta.getCalculoDescuento();
         
         if (renta.getIva() != null && renta.getIva() > 0) {
-            renta.setCalculoIVA(totalCalculo * (renta.getIva() / 100));
+            renta.setCalculoIVA(totalCalculoSinIVA * (renta.getIva() / 100));
         } else {
             renta.setCalculoIVA(0F);
         }
         
-         totalCalculo = (renta.getSubTotal() +
+        Float totalCalculoConIVA = (renta.getSubTotal() +
                         (renta.getEnvioRecoleccion() != null ? renta.getEnvioRecoleccion() : 0F) +
                         (renta.getDepositoGarantia() != null ? renta.getDepositoGarantia() : 0F) +
                         renta.getCalculoIVA()) - renta.getCalculoDescuento();
         
 
-        renta.setTotalCalculo(totalCalculo);
+        renta.setTotalCalculo(totalCalculoConIVA);
 
-        renta.setTotal( (totalCalculo - renta.getTotalAbonos()) + renta.getTotalFaltantes());
+        renta.setTotal( (totalCalculoConIVA - renta.getTotalAbonos()) + renta.getTotalFaltantes());
         if(renta.getTotal() <= 0){
             renta.setDescripcionCobranza(ApplicationConstants.COBRANZA_PAGADO);
         }else if(renta.getTotal() > 0 && renta.getTotalAbonos() == 0){

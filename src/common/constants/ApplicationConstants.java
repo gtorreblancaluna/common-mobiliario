@@ -15,6 +15,7 @@ public class ApplicationConstants {
     public static final String LANGUAJE = "es";
     public static final String COUNTRY = "MX";
     public static final String DATE_FORMAT_LARGE = "EEE dd 'de' MMMM 'del' yyyy";
+    public static final String DATE_FORMAT_EX_LARGE = "EEEE dd 'de' MMMM 'del' yyyy";
     
     public static final String SIMPLE_DATE_FORMAT_SHORT = "dd/MM/yyyy";
     public static final String DECIMAL_FORMAT_SHORT = "#,###,###,##0.00";
