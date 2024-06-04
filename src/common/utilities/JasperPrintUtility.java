@@ -202,18 +202,18 @@ public class JasperPrintUtility {
             parameters.put("FECHA_EVENTO",
                     simpleDateFormat.format(formatter.parse(renta.getFechaEvento())));
             parameters.put("FECHA_ENTREGA",
-                    simpleDateFormat.format(formatter.parse(renta.getFechaEntrega())));
+                    simpleDateFormat.format(formatter.parse(renta.getFechaEntrega())) + ", hora: "+renta.getHoraEntrega());
             parameters.put("FECHA_RECOLECCION",
-                    simpleDateFormat.format(formatter.parse(renta.getFechaDevolucion())));
+                    simpleDateFormat.format(formatter.parse(renta.getFechaDevolucion())) + ", hora: "+renta.getHoraDevolucion());
             parameters.put("DESCRIPCION_EVENTO",renta.getDescripcion());
             parameters.put("FOLIO",String.valueOf(renta.getFolio()));
             parameters.put("TELEFONOS_CLIENTE",telsCustomer);
             parameters.put("COMENTARIO_EVENTO", renta.getComentario() != null ? renta.getComentario() : "");
-            parameters.put("HORA_ENTREGA", renta.getHoraEntrega());
-            parameters.put("HORA_RECOLECCION", renta.getHoraDevolucion());
             parameters.put("TIPO_EVENTO", renta.getTipo().getTipo());
             parameters.put("NOMBRE_USUARIO", renta.getUsuario().getNombre()+" "+renta.getUsuario().getApellidos());
             parameters.put("NOMBRE_CHOFER", renta.getChofer().getNombre()+" "+renta.getChofer().getApellidos());
+            parameters.put("FECHA_PEDIDO",
+                    simpleDateFormat.format(formatter.parse(renta.getFechaPedido())));
             
             parameters.put(ApplicationConstants.URL_IMAGEN_PARAMETER_JASPER_KEY,
                     pathLocation+ApplicationConstants.LOGO_EMPRESA );

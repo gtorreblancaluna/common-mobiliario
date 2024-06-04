@@ -48,22 +48,6 @@ import javax.swing.KeyStroke;
 
 public class UtilityCommon {
     
-    private UtilityCommon() {
-        throw new IllegalStateException(UTILITY_CLASS);
-    }
-    
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UtilityCommon.class.getName());
-
-    public static String getPathLocation()throws IOException,URISyntaxException{
-   
-        File file = new File(UtilityCommon.class.getProtectionDomain().getCodeSource().getLocation()
-                .toURI()).getParentFile();
-        
-        return file+"";
-    
-    }    
-
     public static void setMaximum (final javax.swing.JInternalFrame jInternalFrame,
             final PropertyConstant propertyConstant) {
         
@@ -78,6 +62,22 @@ public class UtilityCommon {
                     ApplicationConstants.MESSAGE_TITLE_ERROR, JOptionPane.ERROR_MESSAGE); 
         }
         
+    }
+    
+    private UtilityCommon() {
+        throw new IllegalStateException(UTILITY_CLASS);
+    }
+    
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UtilityCommon.class.getName());
+
+    public static String getPathLocation()throws IOException,URISyntaxException{
+   
+        File file = new File(UtilityCommon.class.getProtectionDomain().getCodeSource().getLocation()
+                .toURI()).getParentFile();
+        
+        return file+"";
+    
     }
     
     public static void addEscapeListener(final javax.swing.JInternalFrame jInternalFrame) {
