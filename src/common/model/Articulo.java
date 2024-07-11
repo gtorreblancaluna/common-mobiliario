@@ -1,12 +1,13 @@
 package common.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
 @ToString
-public class Articulo {
+public class Articulo implements Serializable{
     
     private Integer articuloId;
     private int categoriaId;
@@ -33,5 +34,6 @@ public class Articulo {
     private Float totalCompras;
     private Float totalShopProvider;
     private Float utiles;
+    private byte[] image;
     
 }

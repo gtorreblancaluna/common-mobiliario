@@ -159,6 +159,8 @@ public class ApplicationConstants {
     public static final String NOMBRE_REPORTE_ENTREGAS = "/reporteEntrega.pdf";
     public static final String NOMBRE_REPORTE_ENTREGAS_SIN_EXT = "/reporteEntrega";
     public static final String RUTA_REPORTE_CONSULTA = "/renta_consulta.jasper";
+    public static final String RUTA_REPORTE_CONSULTA_IMAGENES = "/renta_consulta_imgs.jasper";
+    public static final String NOMBRE_REPORTE_CONSULTA_IMAGENES = "/reporte_consulta_imgs.pdf";
     public static final String NOMBRE_REPORTE_CONSULTA = "/reporte_consulta.pdf";
     public static final String RUTA_REPORTE_CATEGORIAS = "/reporte_por_categorias.jasper";
     public static final String NOMBRE_REPORTE_CATEGORIAS = "/reporte_por_categorias.pdf";

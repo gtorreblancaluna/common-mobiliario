@@ -70,6 +70,7 @@
         <result property="stock" column="stock"/>
         <result property="codigo" column="codigo"/>        
         <result property="enRenta" column="en_renta"/>
+        <result property="image" column="image"/>
         <!-- categoria -->
         <result property="categoria.categoriaId" column="id_categoria"/>        
         <result property="categoria.descripcion" column="descripcion_categoria"/>    
@@ -900,7 +901,7 @@
         FROM color 
         WHERE color = #{descripcion}        
     </select>
-    <insert id="insertarArticulo" parameterType="common.model.Articulo">
+    <insert id="insertarArticulo" parameterType="common.model.Articulo" useGeneratedKeys="true" keyProperty="articuloId">
         INSERT INTO articulo
         (
             id_categoria,
@@ -912,7 +913,8 @@
             precio_compra,
             precio_renta,  
             activo,           
-            codigo                     
+            codigo,
+            image
         )        
         VALUES
         (
@@ -925,7 +927,8 @@
             #{precioCompra},
             #{precioRenta},
             #{activo},
-            #{codigo}            
+            #{codigo},
+            #{image}
         )
     </insert>
     
@@ -940,7 +943,8 @@
             <if test="precioRenta != null">precio_renta = #{precioRenta},</if>
             <if test="codigo != null">codigo = #{codigo},</if> 
             <if test="activo != null and activo != '' ">activo = #{activo},</if>
-            <if test="fechaUltimaModificacion != null ">fecha_ultima_modificacion = #{fechaUltimaModificacion}</if>
+            <if test="fechaUltimaModificacion != null ">fecha_ultima_modificacion = #{fechaUltimaModificacion},</if>
+            <if test="image != null ">image = #{image}</if>
         </set>       
         WHERE id_articulo = #{articuloId}
     </update>

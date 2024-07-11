@@ -159,7 +159,7 @@ public class ItemDAO {
     }
     
     @SuppressWarnings("unchecked")
-    public void insertarArticulo( Articulo articulo) {
+    public void insertarArticulo(Articulo articulo) {
        
         SqlSession session = sqlSessionFactory.openSession();
         try {

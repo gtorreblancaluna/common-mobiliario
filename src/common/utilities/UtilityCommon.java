@@ -15,6 +15,9 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -36,17 +39,76 @@ import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class UtilityCommon {
+    
+    public static String validateAndGetAbsolutePathFromjFileChooser
+        (final javax.swing.JInternalFrame jInternalFrame)throws BusinessException {
+        
+        final String descriptionText = "Cargar imagen";
+        String absolutePath=null;
+        
+        String[] imagesFilter = new String[]{"Image Files", "jpg","jpeg", "png", "gif", "tif"};
+        FileNameExtensionFilter filter = 
+                new FileNameExtensionFilter("Image Files", imagesFilter);
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setFileFilter(filter);
+        int result = jFileChooser.showDialog(jInternalFrame,descriptionText);
+        
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = jFileChooser.getSelectedFile();         
+                
+                ImageInputStream imageInputStream = ImageIO.createImageInputStream(file);
+                
+                Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(imageInputStream);
+                
+                while (imageReaders.hasNext()) {
+                    ImageReader reader = imageReaders.next();
+                    
+                    boolean formatCorrect = false;                    
+                    
+                    for (String filterImg : imagesFilter) {
+                        if (reader.getFormatName().equalsIgnoreCase(filterImg)) {
+                            formatCorrect = true;
+                            break;
+                        }
+                    }
+                    if (!formatCorrect) {
+                        throw new BusinessException("La imagen tiene un formato incorrecto ["
+                                +reader.getFormatName()+"]. Imagenes permitidas: jpg,jpeg,png,gif,tif");
+                    }
+                }
+                
+                absolutePath = file.getAbsolutePath();
+                Path path = Paths.get(absolutePath);
+                long bytes = Files.size(path);
+                System.out.println(String.format("%,d kilobytes", bytes / 1024));
+                if ( (bytes / 1024) >= 65 ) {
+                    throw new BusinessException("La imagen que deseas cargar pesa ["+(bytes / 1024)+"] KB. Intenta cargar otra imagen con un peso menor a 65 kilobytes (KB)");
+                }
+            } catch (IOException io) {
+                throw new BusinessException(io.getMessage(),io);
+            }
+        }
+        
+        return absolutePath;
+    }
     
     public static void setMaximum (final javax.swing.JInternalFrame jInternalFrame,
             final PropertyConstant propertyConstant) {
