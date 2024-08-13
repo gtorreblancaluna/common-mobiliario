@@ -39,13 +39,10 @@ import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -57,54 +54,67 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class UtilityCommon {
     
-    public static String validateAndGetAbsolutePathFromjFileChooser
+    final static String[] imagesFilter = new String[]{"jpg","jpeg", "png", "gif", "tif"};
+    
+    
+    public static void validateImageFromAbsolutePath (final String absolutePath) throws BusinessException {
+                
+        try {
+            
+            boolean result = Arrays.stream(imagesFilter).anyMatch(absolutePath::endsWith);
+            
+            if (!result) {
+                throw new BusinessException("Extensión invalida. Solo puedes agregar imagenes [jpg,jpeg,png,gif,tif]");
+            }
+            
+            Path path = Paths.get(absolutePath);
+            long bytes = Files.size(path);
+            System.out.println(String.format("%,d kilobytes", bytes / 1024));
+            if ( (bytes / 1024) >= 65 ) {
+                throw new BusinessException("La imagen que deseas cargar pesa ["+(bytes / 1024)+"] KB. Intenta cargar otra imagen con un peso menor a 65 kilobytes (KB)");
+            }
+            
+        } catch (IOException io) {
+            throw new BusinessException(io.getMessage(),io);
+        }
+    
+    }
+    
+    public static String getAbsolutePathFromjFileChooserWithCurrentDirectory
+        (final javax.swing.JInternalFrame jInternalFrame, final String currentDirectory)throws BusinessException {
+        
+        final String descriptionText = "Cargar imagen";
+        String absolutePath=null;
+        
+        FileNameExtensionFilter filter = 
+                new FileNameExtensionFilter("Image Files", imagesFilter);
+        JFileChooser jFileChooser = new JFileChooser(currentDirectory);
+        jFileChooser.setFileFilter(filter);
+        int result = jFileChooser.showDialog(jInternalFrame,descriptionText);
+        
+        if (result == JFileChooser.APPROVE_OPTION) {                
+            File file = jFileChooser.getSelectedFile();
+            absolutePath = file.getAbsolutePath();
+        }
+        
+        return absolutePath;
+    }
+    
+    public static String getAbsolutePathFromjFileChooser
         (final javax.swing.JInternalFrame jInternalFrame)throws BusinessException {
         
         final String descriptionText = "Cargar imagen";
         String absolutePath=null;
         
-        String[] imagesFilter = new String[]{"Image Files", "jpg","jpeg", "png", "gif", "tif"};
         FileNameExtensionFilter filter = 
                 new FileNameExtensionFilter("Image Files", imagesFilter);
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setFileFilter(filter);
         int result = jFileChooser.showDialog(jInternalFrame,descriptionText);
         
-        if (result == JFileChooser.APPROVE_OPTION) {
-            try {
-                File file = jFileChooser.getSelectedFile();         
-                
-                ImageInputStream imageInputStream = ImageIO.createImageInputStream(file);
-                
-                Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(imageInputStream);
-                
-                while (imageReaders.hasNext()) {
-                    ImageReader reader = imageReaders.next();
-                    
-                    boolean formatCorrect = false;                    
-                    
-                    for (String filterImg : imagesFilter) {
-                        if (reader.getFormatName().equalsIgnoreCase(filterImg)) {
-                            formatCorrect = true;
-                            break;
-                        }
-                    }
-                    if (!formatCorrect) {
-                        throw new BusinessException("La imagen tiene un formato incorrecto ["
-                                +reader.getFormatName()+"]. Imagenes permitidas: jpg,jpeg,png,gif,tif");
-                    }
-                }
-                
-                absolutePath = file.getAbsolutePath();
-                Path path = Paths.get(absolutePath);
-                long bytes = Files.size(path);
-                System.out.println(String.format("%,d kilobytes", bytes / 1024));
-                if ( (bytes / 1024) >= 65 ) {
-                    throw new BusinessException("La imagen que deseas cargar pesa ["+(bytes / 1024)+"] KB. Intenta cargar otra imagen con un peso menor a 65 kilobytes (KB)");
-                }
-            } catch (IOException io) {
-                throw new BusinessException(io.getMessage(),io);
-            }
+        if (result == JFileChooser.APPROVE_OPTION) {                
+            File file = jFileChooser.getSelectedFile();
+            absolutePath = file.getAbsolutePath();
         }
         
         return absolutePath;

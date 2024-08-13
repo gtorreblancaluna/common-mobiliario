@@ -101,6 +101,7 @@
         INNER JOIN color color ON (a.id_color = color.id_color)
         INNER JOIN tipo_detalle_orden_proveedor tipo_detalle ON (tipo_detalle.id = d.tipo_orden_detalle_proveedor_id)
         WHERE o.fg_activo = '1'
+        AND d.fg_activo = '1'
         <if test="orderId != null and orderId != '' ">
             AND o.id = #{orderId}
         </if> 
