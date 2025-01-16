@@ -132,7 +132,7 @@
         </if>
         <if test="userByCategoryId != null and userByCategoryId != '' ">
             AND #{userByCategoryId} IN (
-                SELECT u.id_usuarios        
+                SELECT u.id_usuarios
                     FROM usuarios u
                     WHERE u.id_usuarios IN (
                             SELECT asigna_categoria.id_usuarios 
@@ -213,22 +213,20 @@
         <if test="userByCategoryId != null and userByCategoryId != '' ">
             AND #{userByCategoryId} IN (
                 SELECT u.id_usuarios        
-                    FROM usuarios u
-                    WHERE u.id_usuarios IN (
-                            SELECT asigna_categoria.id_usuarios 
-                            FROM asigna_categoria asigna_categoria 
-                            WHERE asigna_categoria.id_categoria IN (
-                                SELECT articulo.id_categoria FROM detalle_renta detalle_renta
-                                INNER JOIN articulo articulo ON (detalle_renta.id_articulo = articulo.id_articulo)
-                                WHERE detalle_renta.id_renta = r.id_renta
-                            ) 
+                FROM usuarios u
+                WHERE u.id_usuarios IN (
+                    SELECT asigna_categoria.id_usuarios 
+                    FROM asigna_categoria asigna_categoria 
+                    WHERE asigna_categoria.id_categoria IN (
+                        SELECT articulo.id_categoria FROM detalle_renta detalle_renta
+                        INNER JOIN articulo articulo ON (detalle_renta.id_articulo = articulo.id_articulo)
+                        WHERE detalle_renta.id_renta = r.id_renta
                     )
-                    AND u.activo = 1
+                )
+                AND u.activo = 1
             )
-        </if>
-        
-        ORDER BY STR_TO_DATE(r.fecha_entrega, '%d/%m/%Y')
-        
+        </if>        
+        ORDER BY STR_TO_DATE(r.fecha_entrega, '%d/%m/%Y')        
     </select>
     
     <select id="getByIds" resultMap="resultMapRenta" parameterType="java.util.List">
