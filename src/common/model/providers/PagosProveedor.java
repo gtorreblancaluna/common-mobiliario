@@ -1,5 +1,6 @@
 package common.model.providers;
 
+import common.model.Renta;
 import java.sql.Timestamp;
 import common.model.TipoAbono;
 import common.model.Usuario;
@@ -17,6 +18,8 @@ public class PagosProveedor {
     private Timestamp creado;
     private Timestamp actualizado;
     private TipoAbono tipoAbono;
+    private Proveedor proveedor;
+    private Renta renta;
 
     
 }

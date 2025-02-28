@@ -20,6 +20,15 @@ public class DetalleOrdenProveedor {
     private String status;
     private String statusDescription;
     private DetailOrderProviderType detailOrderProviderType;
+    private Proveedor proveedor;
+    
+    public DetalleOrdenProveedor () {
+
+    }
+    
+    public DetalleOrdenProveedor (Long id) {
+        this.id = id;
+    }
 
     public DetailOrderProviderType getDetailOrderProviderType() {
         return detailOrderProviderType;

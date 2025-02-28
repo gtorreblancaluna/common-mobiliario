@@ -19,7 +19,9 @@
         <result property="orderComment" column="comentario"/>
         <result property="orderDetailType" column="tipo_detalle_orden"/>
         <result property="creado" column="creado"/>
-        <result property="detailComment" column="detalle_comentario"/>  
+        <result property="detailComment" column="detalle_comentario"/>
+        <result property="pagosProveedor" column="pagos_proveedor"/>
+        
     </resultMap>
     
     <resultMap id="resultMapTypeDetailOrderProvider" type="common.model.providers.DetailOrderProviderType">
@@ -44,7 +46,13 @@
         
         <result property="articulo.color.color" column="articulo_color"/>  
         <result property="detailOrderProviderType.id" column="tipo_id"/>
-        <result property="detailOrderProviderType.description" column="tipo_descripcion"/>       
+        <result property="detailOrderProviderType.description" column="tipo_descripcion"/> 
+        
+        <!-- datos proveedor -->
+        <result property="proveedor.id" column="proveedor_id"/>
+        <result property="proveedor.nombre" column="proveedor_nombre"/>
+        <result property="proveedor.apellidos" column="proveedor_apellidos"/>
+        <result property="proveedor.email" column="proveedor_email"/>    
         
     </resultMap>
   
@@ -57,6 +65,7 @@
         <result property="actualizado" column="actualizado"/> 
         <result property="abonos" column="abonos"/>
         <result property="total" column="total"/>
+        <result property="fechaEnBodega" column="fecha_bodega"/>
         <!-- datos de la renta-->
         <result property="renta.rentaId" column="renta_id"/>
         <result property="renta.folio" column="renta_folio"/>
@@ -76,7 +85,9 @@
            
     </resultMap>
     
-    <select id= "getDetailOrderSupplierCustomize" resultMap="resultDetailOrderSupplierCustomize" parameterType="common.model.providers.ParameterOrderProvider">
+    <select id= "getDetailOrderSupplierCustomize" 
+            resultMap="resultDetailOrderSupplierCustomize" 
+            parameterType="common.model.providers.ParameterOrderProvider">
          SELECT
             o.id AS orden_proveedor_id,
             d.id AS detalle_orden_proveedor_id,
@@ -91,12 +102,19 @@
             o.comentario,
             tipo_detalle.description AS tipo_detalle_orden,
             o.creado,
-            d.comentario AS detalle_comentario
+            d.comentario AS detalle_comentario,
+            (
+                SELECT COALESCE(SUM(pagos.cantidad),0)
+                FROM pagos_proveedor pagos
+                WHERE pagos.id_orden_proveedor = o.id
+                AND d.id_proveedores = pagos.id_proveedor
+                AND pagos.fg_activo = '1'
+            )AS pagos_proveedor
         FROM detalle_orden_proveedor d
         INNER JOIN orden_proveedor o ON (o.id = d.id_orden_proveedor)
         INNER JOIN renta r ON (r.id_renta = o.id_renta)
         INNER JOIN usuarios u ON (u.id_usuarios = o.id_usuario)
-        INNER JOIN proveedores p ON (p.id = o.id_proveedores)
+        INNER JOIN proveedores p ON (p.id = d.id_proveedores)
         INNER JOIN articulo a ON (a.id_articulo = d.id_articulo)
         INNER JOIN color color ON (a.id_color = color.id_color)
         INNER JOIN tipo_detalle_orden_proveedor tipo_detalle ON (tipo_detalle.id = d.tipo_orden_detalle_proveedor_id)
@@ -110,7 +128,10 @@
         </if> 
         <if test="nameProvider != null and nameProvider != '' ">
             AND UPPER(CONCAT(p.nombre," ",p.apellidos)) LIKE UPPER(CONCAT('%',#{nameProvider},'%'))
-        </if>  
+        </if>
+        <if test="initDateEnBodega != null and endDateEnBodega != null ">
+            AND o.fecha_bodega BETWEEN #{initDateEnBodega} AND #{endDateEnBodega}
+        </if>
         <if test="initDate != null and endDate != null ">
             AND o.creado BETWEEN #{initDate} AND #{endDate}
         </if>
@@ -209,6 +230,9 @@
         <if test="initDate != null and endDate != null ">
             AND o.creado BETWEEN #{initDate} AND #{endDate}
         </if>
+        <if test="initDateEnBodega != null and endDateEnBodega != null ">
+            AND o.fecha_bodega BETWEEN #{initDateEnBodega} AND #{endDateEnBodega}
+        </if>
         <if test="initEventDate != null and endEventDate != null ">
             AND STR_TO_DATE(r.fecha_evento,'%d/%m/%Y') BETWEEN STR_TO_DATE(#{initEventDate},'%d/%m/%Y') AND STR_TO_DATE(#{endEventDate},'%d/%m/%Y')
         </if>  
@@ -243,11 +267,16 @@
             a.descripcion AS articulo_descripcion,
             c.color AS articulo_color,
             t.description AS tipo_descripcion,
-            t.id AS tipo_id
+            t.id AS tipo_id,
+            p.id AS proveedor_id,
+            p.nombre AS proveedor_nombre,
+            p.apellidos AS proveedor_apellidos,
+            p.email AS proveedor_email
         FROM detalle_orden_proveedor detalle
             INNER JOIN articulo a ON (a.id_articulo = detalle.id_articulo)
             INNER JOIN color c ON (a.id_color = c.id_color)
             INNER JOIN tipo_detalle_orden_proveedor t ON (t.id = detalle.tipo_orden_detalle_proveedor_id)
+            INNER JOIN proveedores p ON (p.id = detalle.id_proveedores)
         WHERE detalle.fg_activo = '1'
         AND detalle.id_orden_proveedor = #{idOrdenProveedor}
         ORDER BY detalle.id DESC
@@ -259,11 +288,16 @@
             a.descripcion AS articulo_descripcion,
             c.color AS articulo_color,
             t.description AS tipo_descripcion,
-            t.id AS tipo_id
+            t.id AS tipo_id,
+            p.id AS proveedor_id,
+            p.nombre AS proveedor_nombre,
+            p.apellidos AS proveedor_apellidos,
+            p.email AS proveedor_email
         FROM detalle_orden_proveedor detalle
             INNER JOIN articulo a ON (a.id_articulo = detalle.id_articulo)
             INNER JOIN color c ON (a.id_color = c.id_color)
             INNER JOIN tipo_detalle_orden_proveedor t ON (t.id = detalle.tipo_orden_detalle_proveedor_id)
+            INNER JOIN proveedores p ON (p.id = detalle.id_proveedores)
         WHERE detalle.fg_activo = '1'
         AND detalle.id = #{id}
     </select>  
@@ -276,8 +310,9 @@
             id_proveedores = #{proveedor.id},
             status = #{status},
             comentario = #{comentario},
-            actualizado = #{actualizado} 
-        WHERE id = #{id}          
+            actualizado = #{actualizado},
+            fecha_bodega = #{fechaEnBodega}
+        WHERE id = #{id}
         
     </update>
     
@@ -291,7 +326,8 @@
             status,
             comentario,
             creado,
-            actualizado
+            actualizado,
+            fecha_bodega
         )
         VALUES
         (
@@ -301,7 +337,8 @@
             #{status},
             #{comentario},
             #{creado},
-            #{actualizado}
+            #{actualizado},
+            #{fechaEnBodega}
         )
     </insert>
     
@@ -315,7 +352,8 @@
            precio,
            comentario,
            creado,
-           actualizado
+           actualizado,
+           id_proveedores
         )
         VALUES
         (
@@ -326,7 +364,8 @@
             #{precio},
             #{comentario},
             #{creado},
-            #{actualizado}
+            #{actualizado},
+            #{proveedor.id}
         )
     </insert>
     
@@ -338,18 +377,31 @@
             id = #{id}
     </update>
     
+    <update id="deleteDetailOrdenProveedorById" parameterType="java.util.Map">
+        UPDATE detalle_orden_proveedor
+            SET fg_activo = '0',
+            actualizado = #{dateTimestamp}
+        WHERE
+            id = #{id}
+    </update>
+    
     <select id="getDetailProvider" parameterType="java.util.Map" resultMap="resultDetailOrderProvider">
         SELECT detalle.*,
             a.id_articulo AS articulo_id,
             a.descripcion AS articulo_descripcion,
             c.color AS articulo_color,
             t.description AS tipo_descripcion,
-            t.id AS tipo_id
+            t.id AS tipo_id,
+            p.id AS proveedor_id,
+            p.nombre AS proveedor_nombre,
+            p.apellidos AS proveedor_apellidos,
+            p.email AS proveedor_email
         FROM detalle_orden_proveedor detalle
             INNER JOIN articulo a ON (a.id_articulo = detalle.id_articulo)
             INNER JOIN color c ON (a.id_color = c.id_color)
             INNER JOIN orden_proveedor o ON (o.id = detalle.id_orden_proveedor)
             INNER JOIN tipo_detalle_orden_proveedor t ON (t.id = detalle.tipo_orden_detalle_proveedor_id)
+            INNER JOIN proveedores p ON (p.id = detalle.id_proveedores)
         WHERE detalle.fg_activo = '1'
         <if test="articuloId != null and articuloId != '' ">
             AND a.id_articulo = #{articuloId}

@@ -14,6 +14,7 @@ import common.model.providers.OrdenProveedor;
 import common.model.providers.DetailOrderProviderType;
 import common.model.providers.queryresult.DetailOrderSupplierQueryResult;
 import common.model.providers.ParameterOrderProvider;
+import common.model.providers.Proveedor;
 
 
 public class OrderProviderService {
@@ -29,6 +30,15 @@ public class OrderProviderService {
     
     private final OrderProviderDAO orderProviderDAO = OrderProviderDAO.getInstance();
     private final ProvidersPaymentsDAO providersPaymentsDAO = ProvidersPaymentsDAO.getInstance();
+    
+    public List<Proveedor> getAllProvidersGroupByOrderId(Long orderId)throws BusinessException{
+        try{
+            return orderProviderDAO.getAllProvidersGroupByOrderId(orderId);
+        }catch(DataOriginException e){
+          throw new BusinessException(e.getMessage(),e.getCause());
+        }
+        
+    }
     
     public List<DetailOrderSupplierQueryResult> getDetailOrderSupplierCustomize(ParameterOrderProvider parameter)throws BusinessException{
         try {
@@ -103,7 +113,7 @@ public class OrderProviderService {
             Float precio, 
             String comentario, 
             Long detailOrderProviderType, 
-            String fgActivo)throws BusinessException{
+            String fgActivo, Long proveedorId)throws BusinessException{
         
         DetalleOrdenProveedor detail = new DetalleOrdenProveedor();
         
@@ -120,6 +130,7 @@ public class OrderProviderService {
         detail.setActualizado(new Timestamp(System.currentTimeMillis()));
         detail.setStatus("1");
         detail.setFgActivo(fgActivo);
+        detail.setProveedor(new Proveedor(proveedorId));
         
         try{
             orderProviderDAO.updateDetailOrderProvider(detail);
@@ -188,6 +199,16 @@ public class OrderProviderService {
         
          return orderProviderDAO.getTypesOrderDetailProvider();
         
+    }
+    
+    public DetalleOrdenProveedor getDetalleOrdenProveedorById (Long id)throws DataOriginException{
+        
+         return orderProviderDAO.getDetalleOrdenProveedorById(id);
+        
+    }
+    
+    public void deleteDetailOrdenProveedorById (Long id) throws DataOriginException{
+        orderProviderDAO.deleteDetailOrdenProveedorById(id);
     }
     
     

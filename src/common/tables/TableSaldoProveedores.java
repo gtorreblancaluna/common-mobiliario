@@ -8,10 +8,12 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
-public class TableViewOrdersProvidersDetail extends JTable {
+public class TableSaldoProveedores extends JTable {
 
-    public TableViewOrdersProvidersDetail() {
+    public TableSaldoProveedores() {
         
         this.setFont(new Font( ApplicationConstants.ARIAL , Font.PLAIN, 12 ));
         format();
@@ -39,6 +41,9 @@ public class TableViewOrdersProvidersDetail extends JTable {
                 }
         });
         
+        TableRowSorter<TableModel> ordenarTabla = new TableRowSorter<TableModel>(this.getModel()); 
+        this.setRowSorter(ordenarTabla);
+        
         
         for (Column column : Column.values()) {
             this.getColumnModel()
@@ -60,38 +65,35 @@ public class TableViewOrdersProvidersDetail extends JTable {
         right.setHorizontalAlignment(SwingConstants.RIGHT);
         
         
-        this.getColumnModel().getColumn(Column.ORDER_SUPPLIER_DETAIL_ID.getNumber()).setMaxWidth(0);
-        this.getColumnModel().getColumn(Column.ORDER_SUPPLIER_DETAIL_ID.getNumber()).setMinWidth(0);
-        this.getColumnModel().getColumn(Column.ORDER_SUPPLIER_DETAIL_ID.getNumber()).setPreferredWidth(0);
-             
+        this.getColumnModel().getColumn(Column.ID.getNumber()).setMaxWidth(0);
+        this.getColumnModel().getColumn(Column.ID.getNumber()).setMinWidth(0);
+        this.getColumnModel().getColumn(Column.ID.getNumber()).setPreferredWidth(0);
+        
         this.getColumnModel().getColumn(Column.RENTA_ID.getNumber()).setMaxWidth(0);
         this.getColumnModel().getColumn(Column.RENTA_ID.getNumber()).setMinWidth(0);
         this.getColumnModel().getColumn(Column.RENTA_ID.getNumber()).setPreferredWidth(0);
         
-        this.getColumnModel().getColumn(Column.FOLIO.getNumber()).setCellRenderer(centrar);
-        this.getColumnModel().getColumn(Column.AMOUNT.getNumber()).setCellRenderer(right);
-        this.getColumnModel().getColumn(Column.PRICE.getNumber()).setCellRenderer(right);
-        this.getColumnModel().getColumn(Column.IMPORT.getNumber()).setCellRenderer(right);
+        this.getColumnModel().getColumn(Column.COUNT_ITEMS.getNumber()).setCellRenderer(centrar);
+        this.getColumnModel().getColumn(Column.COUNT_PAYMENTS.getNumber()).setCellRenderer(centrar);
+                
+        this.getColumnModel().getColumn(Column.SUB_TOTAL.getNumber()).setCellRenderer(right);
+        this.getColumnModel().getColumn(Column.PAYMENTS.getNumber()).setCellRenderer(right);
+        this.getColumnModel().getColumn(Column.BALANCE.getNumber()).setCellRenderer(right);
     }
     
     
     public enum Column{
         
-       ORDER_SUPPLIER_ID(0,"No. Orden",10,String.class, false),
-       ORDER_SUPPLIER_DETAIL_ID(1,"detalle_orden_proveedor_id",10,String.class, false),
-       RENTA_ID(2,"renta_id",10,String.class, false),
-       FOLIO(3,"Folio",20,String.class, false),
-       PRODUCT(4,"Artículo",60,String.class, false),
-       AMOUNT(5,"Cantidad",40,String.class, false),
-       PRICE(6,"Precio",40,String.class, false),
-       IMPORT(7,"Importe",40,String.class, false),
-       EVENT_DATE(8,"Fecha evento",60,String.class, false),
-       USER(9,"Usuario",80,String.class, false),
-       SUPPLIER(10,"Proveedor",80,String.class, false),
-       ORDER_COMMENT(11,"Comentario",80,String.class, false),
-       ORDER_DETAIL_TYPE(12,"Tipo",50,String.class, false),
-       CREATED_AT(13,"Creado",60,String.class, false),
-       PAGOS_PROVEEDOR(13,"Pagos proveedor",60,String.class, false);
+       ID(0,"id",10,String.class, false),
+       RENTA_ID(1,"renta_id",10,String.class, false),
+       ORDER_ID(2,"No. Orden",10,String.class, false),
+       FOLIO(3,"Folio",10,String.class, false),
+       PROVEEDOR_NAME(4,"Proveedor",140,String.class, false),
+       COUNT_ITEMS(5,"Número de articulos",40,String.class, false),
+       COUNT_PAYMENTS(6,"Número de pagos",40,String.class, false),
+       SUB_TOTAL(7,"Sub total",40,String.class, false),
+       PAYMENTS(8,"Pagos",40,String.class, false),
+       BALANCE(9,"Total",40,String.class, false);
        
        private final int number;
        private final String description;

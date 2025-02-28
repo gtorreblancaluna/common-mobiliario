@@ -41,6 +41,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.swing.JComponent;
@@ -48,15 +49,30 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class UtilityCommon {
     
-    final static String[] imagesFilter = new String[]{"jpg","jpeg", "png", "gif", "tif"};
+    static final String[] imagesFilter = new String[]{"jpg","jpeg", "png", "gif", "tif"};
     
+    public static void validateLimitCharacters (JTextField field) throws BusinessException {
     
+       if(!field.getText().isEmpty() 
+            && field.getText().length() > ApplicationConstants.LIMIT_LENGHT_STRING_TO_FILTER){
+           
+        field.requestFocus();
+        field.selectAll();
+        throw new BusinessException(ApplicationConstants.LIMIT_LENGHT_EXCEDED);
+     }
+   }
+    
+    public static DecimalFormat getDecimalFormat () {
+        return 
+            new DecimalFormat(ApplicationConstants.DECIMAL_FORMAT,DecimalFormatSymbols.getInstance(Locale.forLanguageTag(ApplicationConstants.LANGUAGE_TAG)));
+    }
     public static void validateImageFromAbsolutePath (final String absolutePath) throws BusinessException {
                 
         try {
@@ -324,6 +340,17 @@ public class UtilityCommon {
         if (rowSelect >= 0) {
             boolean isSelected = (Boolean) table.getValueAt(rowSelect, columnBoolean);
             table.setValueAt(!isSelected, rowSelect, columnBoolean);
+        }
+    }
+    
+    public static void validatePorcentajeDescuento (String porcentajeDescuento) throws BusinessException {
+        try {
+            Float porcentajeDescuentoFloat = Float.parseFloat(porcentajeDescuento);
+            if (porcentajeDescuentoFloat < 0 || porcentajeDescuentoFloat > 100) {
+                throw new BusinessException("Ingresa un número entre el 1 y el 100.");
+            }
+        } catch (NumberFormatException numberFormatException) {
+            throw new BusinessException("Ingresa un número válido.");
         }
     }
     

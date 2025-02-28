@@ -22,5 +22,6 @@ public class DetailOrderSupplierQueryResult {
     private String detailComment;
     private String orderDetailType;
     private Timestamp creado;
+    private Float pagosProveedor;
     
 }

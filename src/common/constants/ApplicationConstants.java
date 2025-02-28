@@ -7,6 +7,32 @@ public class ApplicationConstants {
         throw new IllegalStateException(UTILITY_CLASS);
     }
     
+    public static final String PARAMETER_JASPER_DESCRIPCION_ABONOS = "DESCRIPCION_ABONOS";
+    public static final String PARAMETER_JASPER_ABONOS = "abonos";
+    public static final String PARAMETER_JASPER_DESCRIPCION_DESCUENTO = "DESCRIPCION_DESCUENTO";
+    public static final String PARAMETER_JASPER_DESCUENTO = "descuento";
+    public static final String PARAMETER_JASPER_DESCRIPCION_IVA = "DESCRIPCION_IVA";
+    public static final String PARAMETER_JASPER_IVA = "iva";
+    public static final String PARAMETER_JASPER_DESCRIPCION_TOTAL_FALTANTES = "DESCRIPCION_TOTAL_FALTANTES";
+    public static final String PARAMETER_JASPER_TOTAL_FALTANTES = "total_faltantes";
+    public static final String PARAMETER_JASPER_DESCRIPCION_ENVIO_RECOLECCION = "DESCRIPCION_ENVIO_RECOLECCION";
+    public static final String PARAMETER_JASPER_ENVIO_RECOLECCION = "ENVIO_RECOLECCION";
+    public static final String PARAMETER_JASPER_DESCRIPCION_DEPOSITO_GARANTIA = "DESCRIPCION_DEPOSITO_GARANTIA";
+    public static final String PARAMETER_JASPER_DEPOSITO_GARANTIA = "DEPOSITO_GARANTIA";
+    public static final String PARAMETER_JASPER_INFO_SUMMARY_FOLIO = "INFO_SUMMARY_FOLIO";
+    public static final String PARAMETER_JASPER_FECHA_RECOLECCION = "FECHA_RECOLECCION";
+    public static final String PARAMETER_JASPER_FECHA_EVENTO = "FECHA_EVENTO";
+    public static final String PARAMETER_JASPER_TOTAL = "TOTAL";
+    public static final String PARAMETER_JASPER_CHOFER = "chofer";
+    public static final String PARAMETER_JASPER_MENSAJE_FALTANTES = "mensaje_faltantes";
+    public static final String PARAMETER_JASPER_URL_SUB_REPORT_CONSULTA = "URL_SUB_REPORT_CONSULTA";    
+    public static final String PARAMETER_JASPER_TELEFONOS_CLIENTE = "TELEFONOS_CLIENTE";
+    public static final String PARAMETER_JASPER_FECHA_REGISTRO = "FECHA_REGISTRO";
+    public static final String PARAMETER_JASPER_FECHA_ENTREGA = "FECHA_ENTREGA";
+    public static final String PARAMETER_JASPER_NOMBRE_EMPRESA = "NOMBRE_EMPRESA";
+    
+    public static final String DECIMAL_FORMAT = "#,###,###,##0.00" ;
+    
     public static final String TRUE = "true";
     public static final String FALSE = "false";
     public static final String UTILITY_CLASS = "Utility class";
@@ -14,6 +40,7 @@ public class ApplicationConstants {
     
     public static final String LANGUAJE = "es";
     public static final String COUNTRY = "MX";
+    public static final String LANGUAGE_TAG = "es_MX";
     public static final String DATE_FORMAT_LARGE = "EEE dd 'de' MMMM 'del' yyyy";
     public static final String DATE_FORMAT_EX_LARGE = "EEEE dd 'de' MMMM 'del' yyyy";
     
@@ -34,10 +61,14 @@ public class ApplicationConstants {
     
     public static final String MESSAGE_GENERATE_TASK_CHOFER_NO_ACTIVE = 
             "Generar tareas a chofer esta desactivado. Puede activarlo en la ventana de Utilerias.";
-        
-    public final static Integer LIMIT_GENERATE_PDF = 20;
-    public static final Integer UN_ATTEND_ALMACEN_TASK_TYPE_CATALOG = 1;
-    public static final Integer ATTEND_ALMACEN_TASK_TYPE_CATALOG = 2;
+    
+    
+    // Validations
+    public static final int LIMIT_LENGHT_STRING_TO_FILTER = 1_000;
+    public static final String LIMIT_LENGHT_EXCEDED = "Limite de caracteres excedido.";
+    public static final int LIMIT_GENERATE_PDF = 20;
+    public static final int UN_ATTEND_ALMACEN_TASK_TYPE_CATALOG = 1;
+    public static final int ATTEND_ALMACEN_TASK_TYPE_CATALOG = 2;
     
     public static final String UN_ATTEND_ALMACEN_TASK_TYPE_CATALOG_DESCRIPTION = "SIN ATENDER";
     public static final String ATTEND_ALMACEN_TASK_TYPE_CATALOG_DESCRIPTION = "ATENDIDO";
@@ -45,6 +76,7 @@ public class ApplicationConstants {
     public static final String SELECT_A_ROW_TO_GENERATE_REPORT = "Selecciona una fila para generar el reporte...";
     public static final String SELECT_A_ROW_NECCESSARY = "Selecciona una fila para continuar...";
     public static final String ALREADY_AVAILABLE = "La ventana ya se encuentra disponible";
+    public static final String ACTION_NOT_PERMITID = "Acción no permitida.";
     public static final String SECRET_KEY = "#yuosSDCG&6729.3";
     
     /** llaves para la tabla configuracion **/
@@ -114,7 +146,7 @@ public class ApplicationConstants {
     public static final String TIPO_COTIZACION = "2";
     public static final String TIPO_FABRICACION = "3";
     
-    public static final String DS_TIPO_PEDIDO = "Pedido";
+    public static final String DS_TIPO_PEDIDO = "Renta";
     public static final String DS_TIPO_COTIZACION = "Cotización";
     
     public static final String LOGO_EMPRESA = "/logo_empresa.jpg";

@@ -18,6 +18,7 @@ public class OrdenProveedor {
     private String fgActivo;
     private String status;
     private String statusDescription;
+    private Timestamp fechaEnBodega;
     private Timestamp creado;
     private Timestamp actualizado;
     private List<DetalleOrdenProveedor> detalleOrdenProveedorList;

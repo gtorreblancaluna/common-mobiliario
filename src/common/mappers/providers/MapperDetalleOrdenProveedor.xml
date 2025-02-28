@@ -18,18 +18,67 @@
         
         <result property="articulo.articuloId" column="articulo_id"/> 
         <result property="articulo.descripcion" column="articulo_descripcion"/> 
-        <result property="articulo.color.color" column="articulo_color"/>  
+        <result property="articulo.color.color" column="articulo_color"/>
+        
+        <!-- datos proveedor -->
+        <result property="proveedor.id" column="proveedor_id"/>
+        <result property="proveedor.nombre" column="proveedor_nombre"/>
+        <result property="proveedor.apellidos" column="proveedor_apellidos"/>
+        <result property="proveedor.email" column="proveedor_email"/>    
              
     </resultMap>
-  
-    <select id="getDetailOrderProviderByOrdenProviderId" resultMap="resultDetailOrderProvider" parameterType="java.lang.Integer" >
+    
+        <resultMap id="resultProvider" type="common.model.providers.Proveedor">
+        <result property="id" column="proveedor_id"/>
+        <result property="nombre" column="proveedor_nombre"/>
+        <result property="apellidos" column="proveedor_apellidos"/>
+        <result property="email" column="proveedor_email"/>    
+    </resultMap>
+    
+    <select id="getAllProvidersGroupByOrderId" resultMap="resultProvider" parameterType="java.lang.Long">
+        SELECT 
+            proveedor.id AS proveedor_id,
+            proveedor.nombre AS proveedor_nombre,
+            proveedor.apellidos AS proveedor_apellidos,
+            proveedor.email AS proveedor_email
+        FROM detalle_orden_proveedor detalle
+            INNER JOIN proveedores proveedor ON (proveedor.id = detalle.id_proveedores)
+        WHERE detalle.fg_activo = '1'
+            AND detalle.id_orden_proveedor = #{orderId} 
+        GROUP BY 
+            detalle.id_proveedores
+    </select> 
+    
+    <select id="getDetalleOrdenProveedorById" resultMap="resultDetailOrderProvider" parameterType="java.lang.Long" >
         SELECT d.*,
-            a.articulo_id AS articulo_id,
+            a.id_articulo AS articulo_id,
             a.descripcion AS articulo_descripcion,
-            c.color AS articulo_color
+            c.color AS articulo_color,
+            p.id AS proveedor_id,
+            p.nombre AS proveedor_nombre,
+            p.apellidos AS proveedor_apellidos,
+            p.email AS proveedor_email
         FROM detalle_orden_proveedor d
             INNER JOIN articulo a ON (a.id_articulo = d.id_articulo)
             INNER JOIN color c ON (c.id_color = a.id_color)
+            INNER JOIN proveedores p ON (p.id = d.id_proveedores)
+        WHERE d.fg_activo = '1'
+        AND d.id = #{id}
+    </select>  
+  
+    <select id="getDetailOrderProviderByOrdenProviderId" resultMap="resultDetailOrderProvider" parameterType="java.lang.Integer" >
+        SELECT d.*,
+            a.id_articulo AS articulo_id,
+            a.descripcion AS articulo_descripcion,
+            c.color AS articulo_color,
+            p.id AS proveedor_id,
+            p.nombre AS proveedor_nombre,
+            p.apellidos AS proveedor_apellidos,
+            p.email AS proveedor_email
+        FROM detalle_orden_proveedor d
+            INNER JOIN articulo a ON (a.id_articulo = d.id_articulo)
+            INNER JOIN color c ON (c.id_color = a.id_color)
+            INNER JOIN proveedores p ON (p.id = d.id_proveedores)
         WHERE d.fg_activo = '1'
         AND d.id_orden_proveedor = #{ordenProviderId}
     </select>  
@@ -44,7 +93,8 @@
                 <if test="status != null">status=#{status},</if>                
                 <if test="actualizado != null">actualizado=#{actualizado},</if>
                 <if test="detailOrderProviderType != null">tipo_orden_detalle_proveedor_id=#{detailOrderProviderType.id},</if>
-                <if test="fgActivo != null">fg_activo=#{fgActivo}</if>
+                <if test="fgActivo != null">fg_activo=#{fgActivo},</if>
+                <if test="proveedor != null">id_proveedores=#{proveedor.id}</if>
             </set>
         WHERE id = #{id}          
         

@@ -18,9 +18,20 @@ public class Proveedor {
 
     public Proveedor() {
     }
+    
+    public Proveedor(Long id, String nombre) {
+        this.nombre = nombre;
+        this.apellidos = "";
+        this.id = id;
+    }
 
     public Proveedor(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public String toString() {
+        return nombre + " " + apellidos;
     }
     
 }

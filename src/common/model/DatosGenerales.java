@@ -12,5 +12,6 @@ public class DatosGenerales {
     private String address3;
     private Integer folio;
     private String infoSummaryFolio;
+    private String infoSummaryFolioVenta;
     
 }

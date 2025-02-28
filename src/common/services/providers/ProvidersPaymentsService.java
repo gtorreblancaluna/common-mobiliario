@@ -5,12 +5,15 @@ import common.exceptions.BusinessException;
 import common.exceptions.DataOriginException;
 import java.util.List;
 import common.model.providers.PagosProveedor;
+import common.model.providers.PaymentProviderFilter;
+import common.model.providers.queryresult.BalanceProviderQueryResult;
 
 /**
  *
  * @author gerardo torreblanca luna
  */
 public class ProvidersPaymentsService {
+    
     
     private ProvidersPaymentsService(){}
     
@@ -20,6 +23,31 @@ public class ProvidersPaymentsService {
     }
     
     private final ProvidersPaymentsDAO providersPaymentsDAO = ProvidersPaymentsDAO.getInstance();
+    
+    public List<BalanceProviderQueryResult> getSaldosProveedor(PaymentProviderFilter filter)throws BusinessException{
+        try{
+            return providersPaymentsDAO.getSaldosProveedor(filter);
+
+        }catch(DataOriginException e){
+            throw new BusinessException(e.getMessage(),e.getCause());
+        }
+    }
+    
+    public List<PagosProveedor> getByFilter(PaymentProviderFilter filter)throws BusinessException{
+        try{
+            return providersPaymentsDAO.getByFilter(filter);
+        }catch(DataOriginException e){
+            throw new BusinessException(e.getMessage(),e.getCause());
+        }
+    }
+    
+    public PagosProveedor getById(Long id)throws BusinessException{
+        try{
+            return providersPaymentsDAO.getById(id);
+        }catch(DataOriginException e){
+            throw new BusinessException(e.getMessage(),e.getCause());
+        }
+    }
     
     
     public List<PagosProveedor> getAllProviderPaymentsByOrderId(Long orderId)throws BusinessException{

@@ -15,6 +15,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 import common.model.providers.ParameterOrderProvider;
+import common.model.providers.Proveedor;
 
 public class OrderProviderDAO {
     
@@ -28,6 +29,23 @@ public class OrderProviderDAO {
     private static final OrderProviderDAO SINGLE_INSTANCE = new OrderProviderDAO();
     public static OrderProviderDAO getInstance(){
         return SINGLE_INSTANCE;
+    }
+    
+    public List<Proveedor> getAllProvidersGroupByOrderId(Long orderId)throws DataOriginException{
+        SqlSession session = sqlSessionFactory.openSession();
+        
+        List<Proveedor> list = null;
+        
+         try{
+            list = (List<Proveedor>) session.selectList("MapperPagosProveedores.getAllProvidersGroupByOrderId",orderId);
+         }catch(Exception ex){
+            log.error(ex);
+            throw new DataOriginException(ex.getMessage(),ex.getCause());
+        } finally {
+            session.close();
+        }
+        
+        return list;
     }
     
     public List<DetailOrderSupplierQueryResult> getDetailOrderSupplierCustomize(ParameterOrderProvider parameter)throws DataOriginException{
@@ -271,6 +289,42 @@ public class OrderProviderDAO {
         } finally {
             if (session != null)
                 session.close();
+        }
+        
+    }
+    
+    public DetalleOrdenProveedor getDetalleOrdenProveedorById (final Long id)throws DataOriginException{       
+       
+        SqlSession session = null;
+        try{
+            session = sqlSessionFactory.openSession();
+            return (DetalleOrdenProveedor) session.selectOne("MapperDetalleOrdenProveedor.getDetalleOrdenProveedorById",id);     
+         }catch(Exception ex){
+            log.error(ex);
+            throw new DataOriginException(ex.getMessage(),ex.getCause());
+        } finally {
+            if (session != null)
+                session.close();
+        }
+        
+    }
+    
+    public void deleteDetailOrdenProveedorById(Long id)throws DataOriginException{
+                
+        SqlSession session = sqlSessionFactory.openSession();
+        
+        Map<String,Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("dateTimestamp", new Timestamp(System.currentTimeMillis()));
+        
+        try{
+            session.update("MapperOrdenProveedor.deleteDetailOrdenProveedorById",map);     
+            session.commit();
+         }catch(Exception ex){
+            log.error(ex);
+            throw new DataOriginException(ex.getMessage(),ex.getCause());
+        } finally {
+            session.close();
         }
         
     }

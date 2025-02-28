@@ -66,16 +66,16 @@ public class TableViewOrdersProviders extends JTable {
        ORDER_NUM(1,"No orden",20,String.class, false),
        FOLIO_RENTA(2,"Folio renta",20,String.class, false),
        USER(3,"Usuario",80,String.class, false),
-       SUPPLIER(4,"Proveedor",40,String.class, false),
-       STATUS(5,"Status",40,String.class, false),
-       CREATED(6,"Creado",80,String.class, false),
-       UPDATED(7,"Actualizado",90,String.class, false),
-       COMMENT(8,"Comentario",100,String.class, false),
-       RENTA_ID(9,"id_renta",20,String.class, false),
-       SUB_TOTAL(10,"Subtotal",80,String.class, false),
-       PAYMENTS(11,"Pagos",80,String.class, false),
-       TOTAL(12,"Total",80,String.class, false),
-       EVENT_DATE(13,"Fecha evento",80,String.class, false);
+       STATUS(4,"Status",40,String.class, false),
+       CREATED(5,"Creado",80,String.class, false),
+       UPDATED(6,"Actualizado",90,String.class, false),
+       COMMENT(7,"Comentario",100,String.class, false),
+       RENTA_ID(8,"id_renta",20,String.class, false),
+       SUB_TOTAL(9,"Subtotal",80,String.class, false),
+       PAYMENTS(10,"Pagos",80,String.class, false),
+       TOTAL(11,"Total",80,String.class, false),
+       EVENT_DATE(12,"Fecha evento",80,String.class, false),
+       DATE_IN_BODEGA(13,"Fecha bodega",80,String.class, false);
        
        private final int number;
        private final String description;

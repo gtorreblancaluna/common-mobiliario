@@ -16,7 +16,7 @@
         <result property="creado" column="creado"/>
         <result property="actualizado" column="actualizado"/>        
     </resultMap>
-  
+      
     <select id="getAllProvider" resultMap="resultProvider" >
         SELECT * FROM proveedores WHERE fg_activo = '1' ORDER BY nombre
     </select> 
