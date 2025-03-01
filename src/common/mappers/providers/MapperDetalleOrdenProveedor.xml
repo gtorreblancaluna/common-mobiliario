@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="MapperDetalleOrdenProveedor">
+  
+    <resultMap id="resultDetailOrderProvider" type="common.model.providers.DetalleOrdenProveedor">        
+        
+        <result property="id" column="id"/>
+        <result property="idOrdenProveedor" column="id_orden_proveedor"/>
+        <result property="cantidad" column="cantidad"/>
+        <result property="precio" column="precio"/>        
+        <result property="tipoOrden" column="tipo_orden"/>
+        <result property="fgActivo" column="fg_activo"/>
+        <result property="creado" column="creado"/>
+        <result property="actualizado" column="actualizado"/>  
+        
+        <result property="articulo.articuloId" column="articulo_id"/> 
+        <result property="articulo.descripcion" column="articulo_descripcion"/> 
+        <result property="articulo.color.color" column="articulo_color"/>
+        
+        <!-- datos proveedor -->
+        <result property="proveedor.id" column="proveedor_id"/>
+        <result property="proveedor.nombre" column="proveedor_nombre"/>
+        <result property="proveedor.apellidos" column="proveedor_apellidos"/>
+        <result property="proveedor.email" column="proveedor_email"/>    
+             
+    </resultMap>
+    
+        <resultMap id="resultProvider" type="common.model.providers.Proveedor">
+        <result property="id" column="proveedor_id"/>
+        <result property="nombre" column="proveedor_nombre"/>
+        <result property="apellidos" column="proveedor_apellidos"/>
+        <result property="email" column="proveedor_email"/>    
+    </resultMap>
+    
+    <select id="getAllProvidersGroupByOrderId" resultMap="resultProvider" parameterType="java.lang.Long">
+        SELECT 
+            proveedor.id AS proveedor_id,
+            proveedor.nombre AS proveedor_nombre,
+            proveedor.apellidos AS proveedor_apellidos,
+            proveedor.email AS proveedor_email
+        FROM detalle_orden_proveedor detalle
+            INNER JOIN proveedores proveedor ON (proveedor.id = detalle.id_proveedores)
+        WHERE detalle.fg_activo = '1'
+            AND detalle.id_orden_proveedor = #{orderId} 
+        GROUP BY 
+            detalle.id_proveedores
+    </select> 
+    
+    <select id="getDetalleOrdenProveedorById" resultMap="resultDetailOrderProvider" parameterType="java.lang.Long" >
+        SELECT d.*,
+            a.id_articulo AS articulo_id,
+            a.descripcion AS articulo_descripcion,
+            c.color AS articulo_color,
+            p.id AS proveedor_id,
+            p.nombre AS proveedor_nombre,
+            p.apellidos AS proveedor_apellidos,
+            p.email AS proveedor_email
+        FROM detalle_orden_proveedor d
+            INNER JOIN articulo a ON (a.id_articulo = d.id_articulo)
+            INNER JOIN color c ON (c.id_color = a.id_color)
+            INNER JOIN proveedores p ON (p.id = d.id_proveedores)
+        WHERE d.fg_activo = '1'
+        AND d.id = #{id}
+    </select>  
+  
+    <select id="getDetailOrderProviderByOrdenProviderId" resultMap="resultDetailOrderProvider" parameterType="java.lang.Integer" >
+        SELECT d.*,
+            a.id_articulo AS articulo_id,
+            a.descripcion AS articulo_descripcion,
+            c.color AS articulo_color,
+            p.id AS proveedor_id,
+            p.nombre AS proveedor_nombre,
+            p.apellidos AS proveedor_apellidos,
+            p.email AS proveedor_email
+        FROM detalle_orden_proveedor d
+            INNER JOIN articulo a ON (a.id_articulo = d.id_articulo)
+            INNER JOIN color c ON (c.id_color = a.id_color)
+            INNER JOIN proveedores p ON (p.id = d.id_proveedores)
+        WHERE d.fg_activo = '1'
+        AND d.id_orden_proveedor = #{ordenProviderId}
+    </select>  
+    
+    <update id="updateDetailOrderProvider" parameterType="common.model.providers.DetalleOrdenProveedor">
+        
+        UPDATE detalle_orden_proveedor 
+            <set>
+                <if test="cantidad != null">cantidad=#{cantidad},</if>
+                <if test="precio != null">precio=#{precio},</if>
+                <if test="comentario != null">comentario=#{comentario},</if>
+                <if test="status != null">status=#{status},</if>                
+                <if test="actualizado != null">actualizado=#{actualizado},</if>
+                <if test="detailOrderProviderType != null">tipo_orden_detalle_proveedor_id=#{detailOrderProviderType.id},</if>
+                <if test="fgActivo != null">fg_activo=#{fgActivo},</if>
+                <if test="proveedor != null">id_proveedores=#{proveedor.id}</if>
+            </set>
+        WHERE id = #{id}          
+        
+    </update>
+  
+</mapper>

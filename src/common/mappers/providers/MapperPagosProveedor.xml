@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="MapperPagosProveedor">
+    
+    <resultMap id="resultBalanceProvider" type="common.model.providers.queryresult.BalanceProviderQueryResult">
+        <result property="detailId" column="id"/>
+        <result property="orderProviderId" column="orden_proveedor_id"/>
+        <result property="rentaId" column="renta_id"/>
+        <result property="rentaFolio" column="renta_folio"/>
+        <result property="detailDate" column="fecha_creado"/>        
+        <result property="providerName" column="proveedor_nombre"/>
+        <result property="providerLastName" column="proveedor_apellidos"/> 
+        
+        <result property="itemsCount" column="count_articulos"/>
+        <result property="paymentCount" column="count_pagos"/>
+        <result property="importTotal" column="total"/>        
+        <result property="paymentTotal" column="pagos"/>
+        
+    </resultMap>
+  
+    <resultMap id="resultProviderPayments" type="common.model.providers.PagosProveedor">        
+        
+        <result property="id" column="id"/>
+        <result property="cantidad" column="cantidad"/>
+        <result property="comentario" column="comentario"/>
+        <result property="fgActivo" column="fg_activo"/>        
+        <result property="creado" column="creado"/>
+        <result property="actualizado" column="actualizado"/> 
+        
+        <!-- datos de la orden proveedor -->
+        <result property="ordenProveedor.id" column="orden_proveedor_id"/> 
+        <result property="ordenProveedor.comentario" column="orden_proveedor_comentario"/> 
+        
+        <result property="tipoAbono.tipoAbonoId" column="tipo_abono_id"/> 
+        <result property="tipoAbono.descripcion" column="tipo_abono_descripcion"/> 
+        
+        <result property="usuario.nombre" column="nombre_usuario"/> 
+        <result property="usuario.apellidos" column="apellidos_usuario"/> 
+        
+        <!-- datos proveedor -->
+        <result property="proveedor.id" column="proveedor_id"/>
+        <result property="proveedor.nombre" column="proveedor_nombre"/>
+        <result property="proveedor.apellidos" column="proveedor_apellidos"/>
+        <result property="proveedor.email" column="proveedor_email"/>    
+        
+        <result property="renta.folio" column="folio_renta"/>
+         
+    </resultMap>
+    
+    <select id="getSaldosProveedor" resultMap="resultBalanceProvider" 
+            parameterType = "common.model.providers.PaymentProviderFilter" >
+        SELECT detalle_orden_proveedor.id,
+                orden_proveedor.id AS orden_proveedor_id,
+                renta.id_renta AS renta_id,
+                renta.folio AS renta_folio,
+                    detalle_orden_proveedor.creado AS fecha_creado,
+                    proveedor.nombre AS proveedor_nombre,
+                    proveedor.apellidos AS proveedor_apellidos,
+                COALESCE(SUM(detalle_orden_proveedor.cantidad),0)AS count_articulos,
+                (
+                    SELECT COUNT(*)
+                    FROM pagos_proveedor pagos_proveedor
+                    WHERE pagos_proveedor.id_orden_proveedor = detalle_orden_proveedor.id_orden_proveedor
+                    AND pagos_proveedor.id_proveedor = detalle_orden_proveedor.id_proveedores
+                    AND pagos_proveedor.fg_activo = '1'
+                )AS count_pagos,
+                COALESCE(SUM(detalle_orden_proveedor.cantidad * detalle_orden_proveedor.precio),0) AS total,
+                (
+                    SELECT COALESCE(SUM(pagos_proveedor.cantidad),0)
+                    FROM pagos_proveedor pagos_proveedor
+                    WHERE pagos_proveedor.id_orden_proveedor = detalle_orden_proveedor.id_orden_proveedor
+                    AND pagos_proveedor.id_proveedor = detalle_orden_proveedor.id_proveedores
+                    AND pagos_proveedor.fg_activo = '1'
+                )AS pagos
+        FROM detalle_orden_proveedor detalle_orden_proveedor
+                INNER JOIN orden_proveedor orden_proveedor ON (orden_proveedor.id = detalle_orden_proveedor.id_orden_proveedor)
+                INNER JOIN proveedores proveedor ON (proveedor.id = detalle_orden_proveedor.id_proveedores)
+                INNER JOIN renta renta ON (renta.id_renta = orden_proveedor.id_renta)
+        WHERE detalle_orden_proveedor.fg_activo = '1'
+            <if test="nameProvider != null and nameProvider != '' ">
+                AND UPPER(CONCAT(proveedor.nombre," ",proveedor.apellidos)) LIKE UPPER(CONCAT('%',#{nameProvider},'%'))
+            </if>  
+            <if test="initEventDate != null and endEventDate != null ">
+                AND STR_TO_DATE(renta.fecha_evento,'%d/%m/%Y') BETWEEN STR_TO_DATE(#{initEventDate},'%d/%m/%Y') AND STR_TO_DATE(#{endEventDate},'%d/%m/%Y')
+            </if>
+            <if test="initDateEnBodega != null and endDateEnBodega != null ">
+                AND orden_proveedor.fecha_bodega BETWEEN #{initDateEnBodega} AND #{endDateEnBodega}
+            </if>  
+            <if test="orderId != null and orderId != '' ">
+                AND detalle_orden_proveedor.id_orden_proveedor = #{orderId}
+            </if> 
+            <if test="providerId != null and providerId != '' ">
+                AND detalle_orden_proveedor.id_proveedores = #{providerId}
+            </if>
+            <if test="initDate != null and endDate != null ">
+                AND detalle_orden_proveedor.creado BETWEEN #{initDate} AND #{endDate}
+            </if>
+            <if test="folioRenta != null and folioRenta != '' ">
+                AND renta.folio = #{folioRenta}
+            </if>
+        GROUP BY detalle_orden_proveedor.id_proveedores
+        ORDER BY detalle_orden_proveedor.id DESC 
+        
+        LIMIT #{limit}
+        
+    </select> 
+    
+    <select id="getPaymentsByFilter" resultMap="resultProviderPayments" 
+            parameterType = "common.model.providers.PaymentProviderFilter" >
+        SELECT p.*,
+            o.id AS orden_proveedor_id,
+            o.comentario AS orden_proveedor_comentario,
+            t.id_tipo_abono AS tipo_abono_id,
+            t.descripcion AS tipo_abono_descripcion,
+            u.nombre AS nombre_usuario,
+            u.apellidos AS apellidos_usuario,
+            proveedor.id AS proveedor_id,
+            proveedor.nombre AS proveedor_nombre,
+            proveedor.apellidos AS proveedor_apellidos,
+            proveedor.email AS proveedor_email,
+            renta.folio AS folio_renta
+        FROM pagos_proveedor p
+            INNER JOIN orden_proveedor o ON (o.id = p.id_orden_proveedor)
+            INNER JOIN tipo_abono t ON (t.id_tipo_abono = p.id_tipo_abono)
+            INNER JOIN usuarios u ON (u.id_usuarios = p.id_usuario)
+            INNER JOIN proveedores proveedor ON (proveedor.id = p.id_proveedor)
+            INNER JOIN renta renta ON (renta.id_renta = o.id_renta)
+        WHERE p.fg_activo = '1'
+            <if test="nameProvider != null and nameProvider != '' ">
+                AND UPPER(CONCAT(proveedor.nombre," ",proveedor.apellidos)) LIKE UPPER(CONCAT('%',#{nameProvider},'%'))
+            </if>  
+            <if test="initEventDate != null and endEventDate != null ">
+                AND STR_TO_DATE(renta.fecha_evento,'%d/%m/%Y') BETWEEN STR_TO_DATE(#{initEventDate},'%d/%m/%Y') AND STR_TO_DATE(#{endEventDate},'%d/%m/%Y')
+            </if>
+            <if test="initDateEnBodega != null and endDateEnBodega != null ">
+                AND o.fecha_bodega BETWEEN #{initDateEnBodega} AND #{endDateEnBodega}
+            </if>   
+            <if test="orderId != null and orderId != '' ">
+                AND p.id_orden_proveedor = #{orderId}
+            </if> 
+            <if test="providerId != null and providerId != '' ">
+                AND p.id_proveedor = #{providerId}
+            </if>
+            <if test="initDate != null and endDate != null ">
+                AND p.creado BETWEEN #{initDate} AND #{endDate}
+            </if>
+            <if test="folioRenta != null and folioRenta != '' ">
+                AND renta.folio = #{folioRenta}
+            </if>
+           
+        ORDER BY p.id DESC LIMIT #{limit}
+        
+    </select> 
+    
+
+    
+    <select id="getPagosProveedorById" resultMap="resultProviderPayments" parameterType = "java.lang.Long" >
+        SELECT p.*,
+            t.id_tipo_abono AS tipo_abono_id,
+            t.descripcion AS tipo_abono_descripcion,
+            u.nombre AS nombre_usuario,
+            u.apellidos AS apellidos_usuario,
+            proveedor.id AS proveedor_id,
+            proveedor.nombre AS proveedor_nombre,
+            proveedor.apellidos AS proveedor_apellidos,
+            proveedor.email AS proveedor_email
+        FROM pagos_proveedor p
+            INNER JOIN tipo_abono t ON (t.id_tipo_abono = p.id_tipo_abono)
+            INNER JOIN usuarios u ON (u.id_usuarios = p.id_usuario)
+            INNER JOIN proveedores proveedor ON (proveedor.id = p.id_proveedor)
+        WHERE p.fg_activo = '1'
+            AND id = #{id}
+        
+    </select> 
+    
+  
+    <select id="getAllProviderPayments" resultMap="resultProviderPayments" parameterType = "java.lang.Long" >
+        SELECT p.*,
+            o.id AS orden_proveedor_id,
+            o.comentario AS orden_proveedor_comentario,
+            t.id_tipo_abono AS tipo_abono_id,
+            t.descripcion AS tipo_abono_descripcion,
+            u.nombre AS nombre_usuario,
+            u.apellidos AS apellidos_usuario,
+            proveedor.id AS proveedor_id,
+            proveedor.nombre AS proveedor_nombre,
+            proveedor.apellidos AS proveedor_apellidos,
+            proveedor.email AS proveedor_email
+        FROM pagos_proveedor p
+            INNER JOIN orden_proveedor o ON (o.id = p.id_orden_proveedor)
+            INNER JOIN tipo_abono t ON (t.id_tipo_abono = p.id_tipo_abono)
+            INNER JOIN usuarios u ON (u.id_usuarios = p.id_usuario)
+            INNER JOIN proveedores proveedor ON (proveedor.id = p.id_proveedor)
+        WHERE p.fg_activo = '1'
+        AND o.id = #{orderId}
+        
+    </select>  
+    <insert id="addPayment" parameterType="common.model.providers.PagosProveedor" >
+        
+         INSERT INTO pagos_proveedor
+        (   
+            id_orden_proveedor,
+            id_usuario,
+            id_tipo_abono,
+            cantidad,
+            comentario,
+            creado,
+            actualizado,
+            id_proveedor
+        )
+        VALUES
+        (
+            #{ordenProveedor.id},
+            #{usuario.usuarioId},
+            #{tipoAbono.tipoAbonoId},
+            #{cantidad},
+            #{comentario},
+            #{creado},
+            #{actualizado},
+            #{proveedor.id}
+        )
+    
+    </insert>
+    
+    <update id="deletePayment" parameterType="common.model.providers.PagosProveedor">
+        UPDATE pagos_proveedor p SET p.fg_activo = '0', p.actualizado = #{actualizado} WHERE p.id = #{id}
+    </update>
+  
+</mapper>
