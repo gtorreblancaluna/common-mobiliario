@@ -1,5 +1,6 @@
 package common.dao;
 
+import common.exceptions.BusinessException;
 import common.exceptions.DataOriginException;
 import common.utilities.MyBatisConnectionFactory;
 import common.model.DatosGenerales;
@@ -20,6 +21,24 @@ public class SystemDAO {
     private static final SystemDAO SINGLE_INSTANCE = new SystemDAO();
    public static SystemDAO getInstance(){
         return SINGLE_INSTANCE;
+    }
+   
+    @SuppressWarnings("unchecked")
+    public void updateFolio (String folio)throws BusinessException {
+        SqlSession session = null;
+        
+        try {
+            session = sqlSessionFactory.openSession();
+            session.update("MapperDatosGenerales.updateFolio",folio);
+            session.commit();
+        }catch(Exception ex){
+            log.error(ex);
+            throw new BusinessException(ex.getMessage());
+        } finally {
+            if (session != null){
+                session.close();
+            }
+        }
     }
         
     @SuppressWarnings("unchecked")

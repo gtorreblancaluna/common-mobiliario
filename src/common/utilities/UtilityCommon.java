@@ -6,7 +6,9 @@ import static common.constants.ApplicationConstants.UTILITY_CLASS;
 import common.constants.PropertyConstant;
 import common.exceptions.BusinessException;
 import common.model.Articulo;
+import common.model.EstadoEvento;
 import common.model.Renta;
+import common.model.Tipo;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -49,6 +51,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -57,6 +60,36 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class UtilityCommon {
     
     static final String[] imagesFilter = new String[]{"jpg","jpeg", "png", "gif", "tif"};
+
+    
+    public static boolean validateHour(String hora) {
+        boolean b;
+        char[] a = hora.toCharArray();
+        String[] c = hora.split(":");
+        try {
+            if ((a[0] == ' ') || (a[1] == ' ') || (a[2] == ' ') || (a[3] == ' ') || (a[4] == ' ') || (Integer.parseInt(c[0]) > 24) || (Integer.parseInt(c[1]) > 59)) {
+                b=false;
+            }else{
+                b=true;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            b=false;
+        }
+        return b;
+    }
+    
+    public static void validateStatusAndTypeEvent (EstadoEvento statusEvent, Tipo typeEvent) throws BusinessException {
+        if (typeEvent.getTipoId().toString().equals(ApplicationConstants.TIPO_COTIZACION)
+                &&
+                !statusEvent.getEstadoId().toString().equals(ApplicationConstants.ESTADO_PENDIENTE))
+        {
+            throw new BusinessException("Evento tipo 'COTIZACIÓN' debe tener estado 'PENDIENTE' ");
+        } else if (typeEvent.getTipoId().toString().equals(ApplicationConstants.TIPO_PEDIDO)
+                &&
+                statusEvent.getEstadoId().toString().equals(ApplicationConstants.ESTADO_PENDIENTE)) {
+            throw new BusinessException("Evento tipo 'PEDIDO' debe tener estado diferente a 'PENDIENTE' ");
+        }
+    }
     
     public static void validateLimitCharacters (JTextField field) throws BusinessException {
     
@@ -199,7 +232,7 @@ public class UtilityCommon {
         listNotifications.stream().forEach(t -> {
             messages.append(t);
             messages.append("\n");
-        });      
+        });
         txtAreaNotifications.setText(null);
         txtAreaNotifications.setText(messages+"");
     }
@@ -229,10 +262,19 @@ public class UtilityCommon {
     }
     
     public static String onlyNumbersAndPoint (String text) {
-        return text.replaceAll("[^0-9.]", "");
+        if (text == null || text.isEmpty()) {
+            return ApplicationConstants.ZERO_STRING;
+        } else {
+            return text.replaceAll("[^0-9.]", "");
+        }
     }
+    
     public static String onlyNumbers (String text) {
-        return text.replaceAll("[^0-9]", "");
+        if (text == null || text.isEmpty()) {
+            return ApplicationConstants.ZERO_STRING;
+        } else {
+            return text.replaceAll("[^0-9]", "");
+        }
     }
     
     // get value from first row selected.

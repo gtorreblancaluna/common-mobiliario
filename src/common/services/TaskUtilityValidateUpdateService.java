@@ -26,14 +26,23 @@ public class TaskUtilityValidateUpdateService {
         TaskCatalogVO taskCatalogVO = new TaskCatalogVO();
         taskCatalogVO.setRentaId(currentRenta.getRentaId()+"");
         
+        String rulesActive = "[Se actualizó-"+ApplicationConstants.DS_TIPO_PEDIDO+"-"+ApplicationConstants.DS_ESTADO_APARTADO+"]"
+                + "[Se actualizó en artículos-"+ApplicationConstants.DS_TIPO_PEDIDO+"-"+ApplicationConstants.DS_ESTADO_APARTADO+"]"
+                + "[Cambio de estado diff a"+ApplicationConstants.DS_ESTADO_PENDIENTE+"]"
+                + "[Cambio tipo]"
+                + "[Cambio estado y tipo]";
+        
         if (eventTypeChange.getTipoId().toString().equals(ApplicationConstants.TIPO_PEDIDO) 
                 && eventStatusChange.getEstadoId().toString().equals(ApplicationConstants.ESTADO_PENDIENTE)) {
-            throw new NoDataFoundException("No se generaron tareas.. Tipo PEDIDO debe tener un Estado diferente a PENDIENTE");
+            throw new NoDataFoundException("No se generaron tareas.. Tipo "
+                    + ""+ApplicationConstants.DS_TIPO_PEDIDO+
+                    " debe tener un Estado diferente a "+ApplicationConstants.DS_ESTADO_PENDIENTE);
         }
         
         if (eventTypeChange.getTipoId().toString().equals(ApplicationConstants.TIPO_COTIZACION) 
                 && !eventStatusChange.getEstadoId().toString().equals(ApplicationConstants.ESTADO_PENDIENTE)) {
-            throw new NoDataFoundException("No se generaron tareas.. Tipo COTIZACIÓN debe tener un Estado igual a PENDIENTE");
+            throw new NoDataFoundException("No se generaron tareas.. Tipo "+ApplicationConstants.DS_TIPO_COTIZACION+
+                    " debe tener un Estado igual a "+ApplicationConstants.DS_ESTADO_PENDIENTE);
         }
         
         if (generalDataUpdated && eventTypeChange.getTipoId().toString().equals(ApplicationConstants.TIPO_PEDIDO)
@@ -71,8 +80,8 @@ public class TaskUtilityValidateUpdateService {
                     taskCatalogVO.setStatusAlmacenTaskCatalog(StatusAlmacenTaskCatalogVO.StatusAlmacenTaskCatalog.UPDATE_TYPE_AND_STATUS_FOLIO);                    
         } else {
            throw new NoDataFoundException(""
-                   + "No se generaron tareas, ya que no coincidio con las reglas operativas actuales"
-                   + "");
+                   + "No se generaron tareas, ya que no coincidio con las reglas operativas actuales..."
+                   + "Reglas operativas aplicadas: "+rulesActive);
         }
         
         return taskCatalogVO;

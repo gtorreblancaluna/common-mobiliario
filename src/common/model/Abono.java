@@ -1,5 +1,6 @@
 package common.model;
 
+import java.sql.Timestamp;
 import lombok.Data;
 import lombok.ToString;
 
@@ -18,4 +19,6 @@ public class Abono {
     private Renta renta;
     private Usuario usuario;
     private Float totalAbonos;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 }

@@ -1,10 +1,12 @@
 package common.dao;
 
+import common.exceptions.BusinessException;
 import common.exceptions.DataOriginException;
 import common.model.DetalleRenta;
 import common.model.Renta;
 import common.model.TipoAbono;
 import common.utilities.MyBatisConnectionFactory;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
@@ -28,6 +30,47 @@ public class RentaDAO {
             return new RentaDAO();
         }
         return SINGLE_INSTANCE;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void saveDetalleRenta(List<DetalleRenta> detalles) throws BusinessException{
+        SqlSession session = null;
+        try {
+            session = sqlSessionFactory.openSession();
+            for (DetalleRenta detalle : detalles) {
+                session.insert("MapperRentas.saveDetalleRenta",detalle);
+                session.commit();
+            }
+        }catch(Exception e){
+            LOGGER.error(e);
+            throw new BusinessException(e.getMessage(),e);
+        } finally {
+            if (session != null)
+                session.close();
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void saveOrUpdate(Renta renta) throws BusinessException{
+        SqlSession session = null;
+        
+        try {
+            session = sqlSessionFactory.openSession();
+            renta.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+            if (renta.getRentaId() > 0) {
+                session.update("MapperRentas.updateRenta",renta);
+            } else {
+                renta.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+                session.insert("MapperRentas.saveRenta",renta);
+            }
+            session.commit();
+        }catch(Exception e){
+            LOGGER.error(e);
+            throw new BusinessException(e.getMessage(),e);
+        } finally {
+            if (session != null)
+                session.close();
+        }
     }
     
     public List<DetalleRenta> getDetailByRentId (String rentaId) throws DataOriginException{

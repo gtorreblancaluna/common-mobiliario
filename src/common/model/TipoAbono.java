@@ -13,6 +13,10 @@ public class TipoAbono {
 
     public TipoAbono() {
     }
+    
+    public TipoAbono(int tipoAbonoId) {
+        this.tipoAbonoId = tipoAbonoId;
+    }
 
     public TipoAbono(int tipoAbonoId, String descripcion) {
         this.tipoAbonoId = tipoAbonoId;

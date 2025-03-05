@@ -16,7 +16,11 @@
         <result property="infoSummaryFolio" column="info_summary_folio"/>  
         <result property="infoSummaryFolioVenta" column="info_summary_folio_venta"/>  
 
-    </resultMap>   
+    </resultMap>
+    
+    <update id="updateFolio" parameterType="java.lang.String">
+        UPDATE datos_generales SET folio=#{folio}
+    </update>
   
     <select id="getGeneralData" resultMap="resultMapDatosGenerales" >
         SELECT 
@@ -30,7 +34,7 @@
             dato.info_summary_folio_venta AS info_summary_folio_venta
         FROM datos_generales dato
         LIMIT 1
-    </select>  
+    </select>
     
     <update id="saveDatosGenerales" parameterType="common.model.DatosGenerales">
         UPDATE datos_generales

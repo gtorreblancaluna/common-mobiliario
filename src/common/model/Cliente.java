@@ -23,4 +23,11 @@ public class Cliente {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     
+    public Cliente (Long id) {
+        this.id = id;
+    }
+    
+    public Cliente () {
+    }
+    
 }

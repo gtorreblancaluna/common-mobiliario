@@ -1,5 +1,7 @@
 package common.model;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import lombok.Data;
 
@@ -49,6 +51,20 @@ public class Renta {
     private String mensajeFaltantes;
     // sumatoria del total de ordenes por proveedor
     private Float totalOrdersProvider;
+    // Solo para validaciones
+    private String horaEntregaInicial;
+    private String horaEntregaFinal;
+    private String horaDevolucionInicial;
+    private String horaDevolucionFinal;
+    // Solo para validaciones
+    private Date fechaEntregaDate;
+    // Solo para validaciones
+    private Date fechaDevolucionDate;
+    // Solo para validaciones
+    private Date fechaEventoDate;
+    
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public Renta(int rentaId) {
         this.rentaId = rentaId;

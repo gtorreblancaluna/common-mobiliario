@@ -5,6 +5,8 @@ import common.dao.RentaDAO;
 import common.exceptions.BusinessException;
 import common.exceptions.DataOriginException;
 import common.exceptions.NoDataFoundException;
+import common.model.Abono;
+import common.model.DatosGenerales;
 import common.model.DetalleRenta;
 import common.model.EstadoEvento;
 import common.model.Renta;
@@ -12,11 +14,15 @@ import common.model.Tipo;
 import common.model.TipoAbono;
 import common.model.Usuario;
 import common.utilities.UtilityCommon;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +34,12 @@ public class RentaService {
     private final OrderStatusChangeService orderStatusChangeService = OrderStatusChangeService.getInstance();
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(RentaService.class.getName());
     private final TaskDeliveryChoferUpdateService taskDeliveryChoferUpdateService = TaskDeliveryChoferUpdateService.getInstance();
+    private final AbonosService abonosService = AbonosService.getInstance();
 
     private RentaService() {}
 
     private static RentaService SINGLE_INSTANCE = null;
+    private final SystemService systemService = SystemService.getInstance();
 
     // creador sincronizado para protegerse de posibles problemas  multi-hilo
     // otra prueba para evitar instanciación múltiple 
@@ -46,6 +54,239 @@ public class RentaService {
             createInstance();
         }
         return SINGLE_INSTANCE;
+    }
+    
+    private String getFechaPedido () {
+        
+        Calendar fecha = Calendar.getInstance();
+        String mes = Integer.toString(fecha.get(Calendar.MONTH) + 1);
+        String dia = Integer.toString(fecha.get(Calendar.DATE));
+        String auxMes = null, auxDia = null;
+        String fechaCreation;
+
+        if (mes.length() == 1) {
+            auxMes = "0" + mes;
+            fechaCreation = fecha.get(Calendar.DATE) + "/" + auxMes + "/" + fecha.get(Calendar.YEAR);
+
+            if (dia.length() == 1) {
+                auxDia = "0" + dia;
+                fechaCreation = auxDia + "/" + auxMes + "/" + fecha.get(Calendar.YEAR);
+
+            }
+
+        } else {
+            fechaCreation = fecha.get(Calendar.DATE) + "/" + (fecha.get(Calendar.MONTH) + 1) + "/" + fecha.get(Calendar.YEAR);
+        }
+        return fechaCreation;
+    }
+    
+    private void validateRenta (final Renta renta) throws BusinessException {
+                
+        UtilityCommon.validateStatusAndTypeEvent(renta.getEstado(),renta.getTipo());
+        
+        StringBuilder stringBuilder = new StringBuilder();
+        int count=0;
+        
+        if (renta.getDescuento() != null && (renta.getDescuento() < 0 || renta.getDescuento() > 100)) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append(". ERROR en PORCENTAJE DE DESCUENTO. Ingresa un número entre el 1 y el 100\n");
+        }        
+        if (!UtilityCommon.validateHour(renta.getHoraEntregaInicial())) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Ingresa hora entrega inicial válida.\n");
+        }
+        if (!UtilityCommon.validateHour(renta.getHoraEntregaFinal())) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Ingresa hora entrega final válida.\n");
+        }
+        if (!UtilityCommon.validateHour(renta.getHoraDevolucionInicial())) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Ingresa hora devolución inicial válida.\n");
+        }
+        if (!UtilityCommon.validateHour(renta.getHoraDevolucionFinal())) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Ingresa hora devolución final válida.\n");
+        }
+        if (renta.getFechaEntregaDate() == null) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Fecha de entrega es requerida.\n");
+        }
+        if (renta.getFechaDevolucionDate() == null) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Fecha de devolución es requerida.\n");
+        }
+        if (renta.getFechaEventoDate() == null) {
+            stringBuilder.append("Fecha de evento es requerida.\n");
+        }
+        if (renta.getChofer() == null || renta.getChofer().getUsuarioId() == 0) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Chofer es requerido.\n");
+        }
+        if (renta.getDescripcion() == null || renta.getDescripcion().isEmpty()) {
+            stringBuilder.append("Dirección es requerido.\n");
+        }
+        if (renta.getDescripcion() != null 
+                && !renta.getDescripcion().isEmpty()
+                && renta.getDescripcion().length() > 400) {
+            stringBuilder.append("Dirección a rebasado los caracteres permitidos [400 caracteres].\n");
+        }
+        if (renta.getComentario()!= null 
+                && !renta.getComentario().isEmpty()
+                && renta.getComentario().length() > 500) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Comentario a rebasado los caracteres permitidos [500 caracteres].\n");
+        }
+        
+        if (renta.getDetalleRenta() == null || renta.getDetalleRenta().size() <= 0) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Ingresa al menos un artículo a la renta.\n");
+        }
+        if (renta.getUsuario() == null) {
+            stringBuilder.append(++count).append(". ");
+            stringBuilder.append("Falta usuario que registro la renta.\n");
+        }
+        
+
+        
+        if (!stringBuilder.toString().isEmpty()) {
+            throw new BusinessException(stringBuilder.toString());
+        }
+        
+    }
+    
+    private void setupBeforeSaveOrUpdate (Renta renta) {
+        
+        renta.setHoraEntrega(renta.getHoraEntregaInicial()+" a "+renta.getHoraEntregaFinal());
+        
+        renta.setHoraDevolucion(renta.getHoraDevolucionInicial()+" a "+renta.getHoraDevolucionFinal());
+        
+        renta.setFechaEvento(
+                new SimpleDateFormat(ApplicationConstants.SIMPLE_DATE_FORMAT_SHORT).format(renta.getFechaEventoDate()));
+        
+        renta.setFechaEntrega(
+                new SimpleDateFormat(ApplicationConstants.SIMPLE_DATE_FORMAT_SHORT).format(renta.getFechaEntregaDate()));
+        
+        renta.setFechaDevolucion(
+                new SimpleDateFormat(ApplicationConstants.SIMPLE_DATE_FORMAT_SHORT).format(renta.getFechaDevolucionDate()));
+        
+        renta.setStock("1");
+        
+        renta.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        
+        if(renta.getRentaId() <= 0) {
+            // para obtener el folio
+            DatosGenerales datosGenerales = systemService.getGeneralData();
+            renta.setFolio(datosGenerales.getFolio() + 1);
+            // nuevo pedido.
+            renta.setFechaPedido(getFechaPedido());
+            renta.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        }
+        
+
+        
+    }
+    
+    private void generateTasks (final Renta renta,
+            List<String> listNotifications, 
+            javax.swing.JTextArea txtAreaNotifications) {
+        
+        if (renta.getTipo().getTipoId().toString().equals(ApplicationConstants.TIPO_PEDIDO) 
+                || renta.getTipo().getTipoId().toString().equals(ApplicationConstants.TIPO_FABRICACION)) {
+            
+            new Thread(() -> {
+                String message;
+
+                try {
+                    message = taskAlmacenUpdateService.saveWhenIsNewEvent(Long.valueOf(renta.getRentaId()), 
+                            renta.getFolio()+"", 
+                            renta.getUsuario().getUsuarioId().toString()
+                    );
+                    
+                    log.info(message);
+                } catch (DataOriginException | NoDataFoundException e) {
+                    message = e.getMessage();
+                    log.error(message);
+                }
+                
+                UtilityCommon.pushNotification(message, listNotifications, txtAreaNotifications);
+
+                
+            }).start();
+
+            new Thread(() -> {
+                String message;                
+
+                try {
+
+                    taskDeliveryChoferUpdateService.saveWhenIsNewEvent(
+                            Long.valueOf(renta.getRentaId()), 
+                            renta.getFolio()+"",renta.getChofer().getUsuarioId().toString(), 
+                            renta.getUsuario().getUsuarioId().toString()
+                    );
+                    message = String.format("Tarea 'entrega chofer' generada. Folio: %s, chofer: %s",renta.getFolio(),renta.getChofer());
+
+                    
+                } catch (DataOriginException | NoDataFoundException e) {
+                    message = e.getMessage();
+                    log.error(message);
+                }
+                
+                UtilityCommon.pushNotification(message, listNotifications, txtAreaNotifications);
+                
+            }).start();
+        } else {
+            String message = 
+                    String.format("No se genero tarea para el folio: %s. Por que el folio "
+                            + "es de tipo: [%s] ....NOTA: Para poder generar tarea"
+                            + " debe de ser de tipo "
+                            + "[%s] o [%s]",
+                            renta.getFolio(),
+                            renta.getTipo().getTipo(), 
+                            ApplicationConstants.DS_TIPO_PEDIDO, 
+                            ApplicationConstants.DS_TIPO_FABRICACION);
+            
+            UtilityCommon.pushNotification(message, listNotifications, txtAreaNotifications);
+        }
+    }
+    
+    public void saveOrUpdate (Renta renta, 
+            List<String> listNotifications, 
+            javax.swing.JTextArea txtAreaNotifications) throws BusinessException {
+        
+        validateRenta(renta);
+        
+        setupBeforeSaveOrUpdate(renta);
+        
+        rentaDao.saveOrUpdate(renta);
+        
+        // update folio
+        systemService.updateFolio(renta.getFolio()+"");
+
+        
+        // guardar el detalle, una vez guardada la renta
+        for (DetalleRenta detalleRenta : renta.getDetalleRenta()) {
+            detalleRenta.setRentaId(renta.getRentaId());
+        }
+        saveDetalleRenta(renta.getDetalleRenta());
+        
+        // guardar abonos
+        if (!renta.getAbonos().isEmpty()) {
+            for (Abono abono : renta.getAbonos()) {
+                abono.setUsuario(renta.getUsuario());
+                abono.setRenta(renta);
+                abono.setFecha(
+                        new SimpleDateFormat(ApplicationConstants.SIMPLE_DATE_FORMAT_SHORT).format(new Date())
+                );
+            }
+        }
+        abonosService.save(renta.getAbonos());
+        
+        generateTasks(renta,listNotifications,txtAreaNotifications);
+        
+        String messageSuccess = renta.getUsuario().getNombre()+ " registró un evento de tipo "+renta.getTipo().getTipo()
+                +" con status ["+renta.getEstado().getDescripcion()+ "], FOLIO: ["+renta.getFolio()+"]";
+            UtilityCommon.pushNotification(messageSuccess,listNotifications,txtAreaNotifications);
+            log.info(messageSuccess);
     }
     
     public Renta getByFolio (Integer folio) throws DataOriginException, BusinessException {
@@ -190,6 +431,10 @@ public class RentaService {
         }).start();
         
         
+    }
+    
+    public void saveDetalleRenta (List<DetalleRenta> detalles) throws BusinessException{
+        rentaDao.saveDetalleRenta(detalles);
     }
     
     public List<DetalleRenta> getDetailByRentId (String rentaId) throws DataOriginException{

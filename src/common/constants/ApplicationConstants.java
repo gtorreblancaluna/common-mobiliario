@@ -55,6 +55,7 @@ public class ApplicationConstants {
     public static final String ARIAL = "Arial";
     
     public static final String EMPTY_STRING = "";
+    public static final String ZERO_STRING = "0";
         
     public static final String MESSAGE_GENERATE_TASK_ALMACEN_NO_ACTIVE = 
             "Generar tareas a almacen esta desactivado. Puede activarlo en la ventana de Utilerias.";
@@ -148,6 +149,7 @@ public class ApplicationConstants {
     
     public static final String DS_TIPO_PEDIDO = "Renta";
     public static final String DS_TIPO_COTIZACION = "Cotización";
+    public static final String DS_TIPO_FABRICACION = "Venta";
     
     public static final String LOGO_EMPRESA = "/logo_empresa.jpg";
     

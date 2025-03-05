@@ -112,8 +112,10 @@ public class JasperPrintUtility {
             parameter.put(ApplicationConstants.PARAMETER_JASPER_FECHA_EVENTO,ApplicationConstants.EMPTY_STRING);
         } else {
             parameter.put(ApplicationConstants.PARAMETER_JASPER_INFO_SUMMARY_FOLIO,datosGenerales.getInfoSummaryFolio());
+            
             parameter.put(ApplicationConstants.PARAMETER_JASPER_FECHA_RECOLECCION,"Fecha recolección: "+
                     simpleDateFormat.format(formatter.parse(renta.getFechaDevolucion())) + ". Horario: " + renta.getHoraDevolucion());
+            
             parameter.put(ApplicationConstants.PARAMETER_JASPER_FECHA_EVENTO,"Fecha de la renta: "+
                     simpleDateFormat.format(formatter.parse(renta.getFechaEvento())));
         }
@@ -128,7 +130,7 @@ public class JasperPrintUtility {
         parameter.put(ApplicationConstants.PARAMETER_JASPER_FECHA_REGISTRO,
                     simpleDateFormat.format(formatter.parse(renta.getFechaPedido())));
 
-        parameter.put(ApplicationConstants.PARAMETER_JASPER_FECHA_ENTREGA,
+        parameter.put(ApplicationConstants.PARAMETER_JASPER_FECHA_ENTREGA,"Fecha de entrega: "+
                 simpleDateFormat.format(formatter.parse(renta.getFechaEntrega())) + ". Horario: " +  renta.getHoraEntrega());
         
         

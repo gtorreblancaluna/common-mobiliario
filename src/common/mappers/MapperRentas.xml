@@ -37,6 +37,9 @@
         <!--status event-->
         <result property="estado.estadoId" column="id_estado"/>
         <result property="estado.descripcion" column="estado_descripcion"/>
+        
+        <result property="createdAt" column="created_at"/>
+        <result property="eupdatedAt" column="updated_at"/>
           
     </resultMap>
     
@@ -72,7 +75,91 @@
         <result property="articulo.totalCompras" column="total_compras" />
         <result property="articulo.totalShopProvider" column="total_shop_provider" />
       
-    </resultMap> 
+    </resultMap>
+    
+        <insert id="saveDetalleRenta" 
+            parameterType="common.model.DetalleRenta" 
+            useGeneratedKeys="true" keyProperty="detalleRentaId">
+            
+            INSERT INTO detalle_renta
+            (
+                id_renta,
+                cantidad,
+                id_articulo,
+                p_unitario,
+                comentario,
+                se_desconto,
+                porcentaje_descuento
+            )
+            VALUES(
+                #{rentaId},
+                #{cantidad},
+                #{articulo.articuloId},
+                #{precioUnitario},
+                #{comentario},
+                #{seDesconto},
+                #{porcentajeDescuento}
+            )
+        </insert>
+    
+    <insert id="saveRenta" 
+            parameterType="common.model.Renta" 
+            useGeneratedKeys="true" keyProperty="rentaId">
+        
+        INSERT INTO renta(
+            id_estado,
+            id_clientes,
+            id_usuarios,
+            fecha_pedido,
+            fecha_entrega,
+            hora_entrega,
+            fecha_devolucion,
+            descripcion,
+            descuento,
+            cantidad_descuento,
+            iva,
+            comentario,
+            id_usuario_chofer,
+            folio,
+            stock,
+            id_tipo,
+            hora_devolucion,
+            fecha_evento,
+            deposito_garantia,
+            envio_recoleccion,
+            mostrar_precios_pdf,
+            created_at,
+            updated_at,
+            descripcion
+        )VALUES(
+            #{estado.estadoId},
+            #{cliente.id},
+            #{usuario.usuarioId},
+            #{fechaPedido},
+            #{fechaEntrega},
+            #{horaEntrega},
+            #{fechaDevolucion},
+            #{descripcion},
+            #{descuento},
+            #{cantidadDescuento},
+            #{iva},
+            #{comentario},
+            #{chofer.usuarioId},
+            #{folio},
+            #{stock},
+            #{tipo.tipoId},
+            #{horaDevolucion},
+            #{fechaEvento},
+            #{depositoGarantia},
+            #{envioRecoleccion},
+            #{mostrarPreciosPdf},
+            #{createdAt},
+            #{updatedAt},
+            #{descripcion}
+        )
+        
+        
+    </insert> 
 
     <select id="getEventsBetweenDeliveryDate" resultMap="resultMapRenta" parameterType="java.util.Map">
         SELECT
@@ -107,7 +194,9 @@
             chofer.nombre AS chofer_nombre,
             chofer.apellidos AS chofer_apellidos,
             e.id_estado,
-            e.descripcion AS estado_descripcion
+            e.descripcion AS estado_descripcion,
+            r.created_at,
+            r.updated_at
         FROM renta r
             INNER JOIN estado e ON (e.id_estado = r.id_estado)
             INNER JOIN clientes c ON (c.id_clientes = r.id_clientes)
@@ -185,7 +274,9 @@
             chofer.nombre AS chofer_nombre,
             chofer.apellidos AS chofer_apellidos,
             e.id_estado,
-            e.descripcion AS estado_descripcion
+            e.descripcion AS estado_descripcion,
+            r.created_at,
+            r.updated_at
         FROM renta r
             INNER JOIN estado e ON (e.id_estado = r.id_estado)
             INNER JOIN clientes c ON (c.id_clientes = r.id_clientes)
@@ -262,7 +353,9 @@
             chofer.nombre AS chofer_nombre,
             chofer.apellidos AS chofer_apellidos,
             e.id_estado,
-            e.descripcion AS estado_descripcion
+            e.descripcion AS estado_descripcion,
+            r.created_at,
+            r.updated_at
         FROM renta r
             INNER JOIN estado e ON (e.id_estado = r.id_estado)
             INNER JOIN clientes c ON (c.id_clientes = r.id_clientes)
@@ -368,7 +461,9 @@
                 (SUM( (cantidad*p_unitario) - ((cantidad*p_unitario) * (porcentaje_descuento / 100) ))),
                 (SUM( (cantidad*p_unitario) ))) AS suma
                 FROM detalle_renta WHERE id_renta = #{id}
-            ) AS sub_total
+            ) AS sub_total,
+            r.created_at,
+            r.updated_at
         FROM renta r
             INNER JOIN estado e ON (e.id_estado = r.id_estado)
             INNER JOIN clientes c ON (c.id_clientes = r.id_clientes)
@@ -430,7 +525,9 @@
                 (SUM( (cantidad*p_unitario) - ((cantidad*p_unitario) * (porcentaje_descuento / 100) ))),
                 (SUM( (cantidad*p_unitario) ))) AS suma
                 FROM detalle_renta WHERE id_renta = #{id}
-            ) AS sub_total
+            ) AS sub_total,
+            r.created_at,
+            r.updated_at
         FROM renta r
             INNER JOIN estado e ON (e.id_estado = r.id_estado)
             INNER JOIN clientes c ON (c.id_clientes = r.id_clientes)
